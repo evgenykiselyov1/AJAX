@@ -1,0 +1,2755 @@
+<apex:page controller="saveExtention" standardStylesheets="false" showHeader="false" sidebar="false" ><!--applyHtmlTag="false" applyBodyTag="false" docType="html-5.0"-->
+    <script src="../../soap/ajax/45.0/connection.js" type="text/javascript"></script>
+    <script src="/soap/ajax/45.0/apex.js" type="text/javascript"></script>
+    <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"/>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+            <script src="https://unpkg.com/popper.js"></script>
+            <script src="https://unpkg.com/tooltip.js"></script>
+            <apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js"/>
+            <style>
+                .dataCell label:hover{
+                cursor:pointer;
+                }
+                
+                #actionRegionTable, #actionRegionTable1{
+                width: unset;
+                }
+                #actionRegionTable td input {
+                width: unset;
+                }  
+                #actionRegionTable1 td input {
+                width: unset;
+                }                   
+                .collapse.in {
+                display: flex;
+                }
+                ::-webkit-scrollbar { 
+                display: none; 
+                }
+                body {font-family: Arial;}
+                
+                /* Style the tab */
+                .tab {
+                overflow: hidden;
+                border: 1px solid #ccc;
+                background-color: #f1f1f1;
+                }
+                
+                /* Style the buttons inside the tab */
+                .tab button {
+                background-color: inherit;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+                font-size: 17px;
+                }
+                
+                /* Change background color of buttons on hover */
+                .tab button:hover {
+                background-color: #ddd;
+                }
+                
+                /* Create an active/current tablink class */
+                .tab button.active {
+                background-color: #ccc;
+                }
+                
+                /* Style the tab content */
+                .tabcontent {
+                display: none;
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+                border-top: none;
+                }
+                
+                /* Style the subtab content */    
+                .subtabcontent{
+                display: none;
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+                border-top: none;
+                font-size: 30px;
+                }
+                
+                .subsubtabcontent{
+                display: none;
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+                border-top: none;
+                font-size: 30px;
+                }
+                
+                ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                background-color: #f1f1f1;
+                position: relative;
+                float: center;
+                }
+                
+                ul li{
+                font-size:30px;
+                }
+                
+                li a {
+                display: block;
+                color: #000;
+                padding: 8px 16px;
+                text-decoration: none;
+                }
+                
+                /* Change the link color on hover */
+                li a:hover {
+                background-color: #555;
+                color: white;
+                }    
+                
+                body ul li {
+                width: 100%;
+                }  
+                
+                /*Styles for slides*/
+                
+                body, html {
+                height: 100%;
+                margin: 0;
+                }
+                
+                .slider {
+                overflow: auto;
+                vertical-align: middle;
+                }
+                
+                .slides {
+                
+                height: 97%;
+                width: 100%;
+                bottom:0px;
+                position:fixed;  
+                text-align: center;
+                
+                display: flex;
+                overflow-x: auto;
+                
+                border-radius: 5px;
+                
+                scroll-behavior: smooth;
+                
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-points-x: repeat(300px);
+                scroll-snap-type: mandatory;
+                }
+
+                .slides::-webkit-scrollbar-track {
+                background: transparent;
+                }
+                .slides > div {
+                flex-shrink: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 10px;
+                background: #eee;
+                transform-origin: center center;
+                transform: scale(1);
+                transition: transform 0.5s;
+                position: relative;
+                
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 100px;
+                }
+                .slides > div:target {
+                transform: scale(1.0);
+                }
+                
+                img {
+                height: 100vh;
+                }
+                
+                .slider > a {
+                display: inline-flex;
+                width: 1.5rem;
+                height: 1.5rem;
+                background: white;
+                text-decoration: none;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                margin: 0 0 0.5rem 0.5rem;
+                position: relative;
+                }
+                .slider > a:active {
+                top: 1px;
+                }
+                .slider > a:focus {
+                background: #000;
+                }
+                
+                /* Don't need button navigation */
+                @supports (scroll-snap-type) {
+                .slider > a {
+                display: none;
+                }
+                }
+                
+                .button {
+                background-color: #008CBA; /* Green */
+                border: none;
+                color: white;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 15px;
+                cursor: pointer;
+                }    
+                
+            </style>
+            <style>
+                .mySlides {
+                display: none;
+                height:inherit;
+                }
+                img {vertical-align: middle;}
+                .slideImg{
+                }
+                .slideImg:hover{
+                cursor:pointer;
+                }
+                /* Slideshow container */
+                .slideshow-container {
+                max-width: 1000px;
+                position: relative;
+                margin: auto;
+                }
+                /* Next and previous buttons */
+                .prev, .next {
+                cursor: pointer;
+                position: absolute;
+                top: 50%;
+                width: auto;
+                padding: 16px;
+                margin-top: -22px;
+                color: white;
+                font-weight: bold;
+                font-size: 18px;
+                transition: 0.6s ease;
+                border-radius: 0 3px 3px 0;
+                user-select: none;
+                background-color: gray;
+                }
+                /* Position the "next button" to the right */
+                .next {
+                right: 0;
+                border-radius: 3px 0 0 3px;
+                }
+                .prev {
+                left: 0;
+                }
+                /* On hover, add a black background color with a little bit see-through */
+                .prev:hover, .next:hover {
+                background-color: rgba(0,0,0,0.8);
+                }
+                /* Caption text */
+                .text {
+                color: #f2f2f2;
+                font-size: 15px;
+                padding: 8px 12px;
+                position: absolute;
+                bottom: 8px;
+                width: 100%;
+                text-align: center;
+                }
+                /* Number text (1/3 etc) */
+                .numbertext {
+                color: black;
+                font-size: 20px;
+                padding: 8px 12px;
+                position: absolute;
+                top: 0;
+                }
+                /* The dots/bullets/indicators */
+                .dot {
+                cursor: pointer;
+                height: 15px;
+                width: 15px;
+                margin: 0 2px;
+                background-color: #bbb;
+                border-radius: 50%;
+                display: inline-block;
+                transition: background-color 0.6s ease;
+                }
+                /* Fading animation */
+                .fade {
+                -webkit-animation-name: fade;
+                -webkit-animation-duration: 1.5s;
+                animation-name: fade;
+                animation-duration: 1.5s;
+                animation-fill-mode: forwards;//backwards;
+                }
+                
+                @-webkit-keyframes fade {
+                from {opacity: 0.4} 
+                to {opacity: 1}
+                }
+                
+                @keyframes fade {
+                from {opacity: 0.4} 
+                to {opacity: 1}
+                }
+                
+                /* On smaller screens, decrease text size */
+                @media only screen and (max-width: 300px) {
+                .prev, .next,.text {font-size: 11px}
+                }
+                
+                .btn{
+                margin-bottom: 0;
+                font-weight: 400;
+                text-align: center;
+                white-space: nowrap;
+                vertical-align: middle;
+                -ms-touch-action: manipulation;
+                touch-action: manipulation;
+                cursor: pointer;
+                background-image: none;
+                padding: 6px 12px;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                }
+            </style>
+            <style type="text/css">
+                .outBorder {
+                border:3px outset black;
+                }
+                .inBorder{
+                border-top:2px dotted blue;
+                border-left:2px dotted blue;
+                }
+                .pbBody table {
+                width: 100%;
+                }                 
+                .pbBody table tbody td input {
+                width: 90%;
+                }
+                .pbBody table tbody td textarea {
+                overflow: hidden;
+                width: 90%;
+                }  
+                
+                .pbBody table tbody tr {
+                border-bottom: 1px solid #ccc;
+                }
+                .pbBody table tbody tr td{
+                padding-top: 0.5em;
+                padding-bottom: 0.5em;
+                }                
+                .pbBody table thead tr {
+                background-color: lightgray;
+                }
+                .msgIcon{
+                height:0;
+                }
+                .requiredInput{
+                border-left: 5px solid #c00;
+                }
+                .bPageBlock{}
+                .requiredBlock{}                
+                
+                .bPageBlock .requiredInput .requiredBlock {
+                background-color: #c00;
+                position: absolute;
+                left: -4px;
+                width: 3px;
+                top: 1px;
+                bottom: 1px;
+                }     
+                
+            </style>
+            <style>
+                .tooltip {
+                position: relative;
+                display: inline-block;
+                border-bottom: 1px dotted black;
+                opacity: 1;
+                }
+                
+                .tooltip .tooltiptext {
+                visibility: hidden;
+                width: 55em;
+                background-color: #555;
+                color: #fff;
+                border-radius: 6px;
+                padding: 5px 5px;
+                position: absolute;
+                z-index: 1;
+                opacity: 0;
+                transition: opacity 0.3s;
+                font-size: 22px;
+                }
+                
+                .tooltip .tooltiptext::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: #555 transparent transparent transparent;
+                }
+                
+                .tooltip:hover .tooltiptext {
+                visibility: visible;
+                opacity: 1;
+                }
+                
+                pre{
+                font-size:0.8em;
+                }
+            </style>   
+        </head>
+        <body style="height: 100%;">
+            
+            <div class="tab" >
+                <button class="tablinks" name="What_AJAX_is" onclick="openSlides(event, 'AJAXTechnology', this.name)">What AJAX is</button>
+                <button class="tablinks" name="AJAX_action_tags" onclick="openTopic(event, 'AJAXActionTags', this.name)">AJAX action tags in vf page</button>
+                <button class="tablinks" name="AJAX_Using_REST_API" onclick="openTopic(event, 'AJAXRESTAPI', this.name)">AJAX Using REST API</button>
+                <button class="tablinks" name="AJAX_external_API" onclick="openTopic(event, 'AJAXExternalAPI', this.name)">Fetch data from an external API using Ajax</button>
+                <button class="tablinks" name="JS_Remoting" onclick="openTopic(event, 'JS_Remoting', this.name)">JavaScript Remoting</button>
+                <button class="tablinks" name="VF_Remote_Objects" onclick="openTopic(event, 'VF_Remote_Objects', this.name)">Visualforce Remote Objects</button>
+                <button class="tablinks" name="AJAX_Tool_KIT" onclick="openTopic(event, 'AJAXToolKIT', this.name)">AJAX Tool KIT</button>
+                <button class="tablinks" name="AJAX_Demo" onclick="window.open('https://myheadhunter-developer-edition.eu10.force.com/FindJobPage/', '_blank');">AJAX Tool KIT Demo</button>
+            </div> 
+            
+            <div id="VF_Remote_Objects" class="tabcontent" >
+                <div class="tab">
+                    <button class="tablinks" name="RemObjsIntro" onclick="openSubTopic(event, 'RemObjsIntro', this.name)">Remote Objects</button>
+                    <button class="tablinks" name="Using_Remote_Objects" onclick="openSubTopic(event, 'Using_Remote_Objects', this.name)">Using Remote Objects</button>  
+                    <button class="tablinks" name="Remote_Objects_Query" onclick="openSubTopic(event, 'Remote_Objects_Query', this.name)">Remote Objects Query</button>
+                    <button class="tablinks" name="Callback_Functions" onclick="openSubTopic(event, 'Callback_Functions', this.name)">Remote Objects Callback Functions</button>
+                    <button class="tablinks" name="Best_Practices" onclick="openSubTopic(event, 'Best_Practices', this.name)">Best Practices</button> 
+                    <button class="tablinks" name="Remote_Objects_Limits" onclick="openSubTopic(event, 'Remote_Objects_Limits', this.name)">Remote Objects Limits</button>
+                </div>    
+            </div>     
+            
+            <div id="RemObjsIntro" class="subtabcontent">
+                <pre>
+   Visualforce Remote Objects это прокси-объекты. 
+
+   Позволяют выполнять базовые операции DML над объектами sObject непосредственно из JavaScript.
+
+   Встроенный контроллер для Remote Objects сам управляет правилами общего доступа, безопасностью на уровне поля 
+   и другими проблемами доступа к данным.
+
+   Страницы, использующие Remote Objects, подчиняются всем стандартным ограничениям Visualforce, но, как и JavaScript remoting, 
+   вызовы Remote Objects не учитываются в лимитах запросов API.
+
+   Применение Remote Objects состоит из реализации двух отдельных частей функциональности на одной странице
+   1. Определения доступа, написанные на Visualforce с использованием компонентов Remote Objects. 
+   Эти компоненты генерируют набор прокси-объектов JavaScript, которые вы можете использовать на шаге 2
+   2. Функции доступа к данным, написанные на JavaScript. 
+   Эти функции используют прокси-объекты, для выполнения операций создания, извлечения, обновления и удаления данных.
+</pre>
+                <pre>
+<span>&lt;</span>apex:remoteObjects <span>&gt;</span>
+    <span>&lt;</span>apex:remoteObjectModel name="Warehouse__c" jsShorthand="Warehouse" fields="Name,Id"<span>&gt;</span>
+        <span>&lt;</span>apex:remoteObjectField name="Phone__c" jsShorthand="Phone"/<span>&gt;</span>
+    <span>&lt;</span>/apex:remoteObjectModel<span>&gt;</span>
+<span>&lt;</span>/apex:remoteObjects<span>&gt;</span>
+
+<span>&lt;</span>script<span>&gt;</span>
+    var fetchWarehouses = function(){
+        // Create a new Remote Object
+        var wh = new SObjectModel.Warehouse();
+        // Use the Remote Object to query for 10 warehouse records
+        wh.retrieve({ limit: 10 }, function(err, records, event){
+            if(err) {
+                alert(err.message);
+            }
+            else {
+                var ul = document.getElementById("warehousesList");
+                records.forEach(function(record) {
+                    // Build the text for a warehouse line item
+                    var whText = record.get("Name");
+                    whText += " -- ";
+                    whText += record.get("Phone");
+                    // Add the line item to the warehouses list
+                    var li = document.createElement("li");
+                    li.appendChild(document.createTextNode(whText));
+                    ul.appendChild(li);
+                });
+            }
+        });
+    };
+<span>&lt;</span>/script<span>&gt;</span>
+</pre>
+            </div>
+            
+            <div id="Using_Remote_Objects" class="subtabcontent" style="height:90vh; overflow-y: scroll;">
+                <div class="tab" style="position:relative; list-style: none; float: center; display: block; text-align: center;">
+                    <!--<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Simple collapsible</button>-->
+                    
+                    <ul style="text-align: center; overflow-y: scroll;">
+                        <li><a data-toggle="collapse" data-target="#Creating_Records">Create Records</a>
+                            <div id="Creating_Records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+RemoteObjectModel.create({field_values}, callback_function)
+
+var ctDetails = { FirstName: 'Marc', LastName: 'Benioff' };
+// Call create() on an existing Contact model, with no arguments
+var ct = new RemoteObjectModel.Contact(ctDetails);
+ct.create();
+// Call create() on an empty Contact model, passing in field values
+var ct = new RemoteObjectModel.Contact();
+ct.create(ctDetails);
+</pre>                                    
+                                </div>
+                            </div>
+                        </li>
+
+                        <li><a data-toggle="collapse" data-target="#Retrieving_Records">Retrieve Records</a>
+                            <div id="Retrieving_Records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+RemoteObjectModel.retrieve({criteria}, callback_function)
+
+var ct = new RemoteObjectModel();
+// Empty callback functions for simplicity
+ct.retrieve({where: {FirstName: {eq: 'Marc' }}}, function() {}); // query object
+ct.retrieve(function(){
+    return({where: {FirstName: {eq: 'Marc' }}});
+}, function() {}); // function returning query object
+</pre>
+                                </div>
+                            </div>
+                        </li>  
+                        
+                        <li><a data-toggle="collapse" data-target="#Updating_Records">Update Records</a>
+                            <div id="Updating_Records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+RemoteObjectModel.update([record_ids], {field_values}, callback_function)
+
+ctDetails = {FirstName: "Marc", LastName: "Benioff"};
+ct = new RemoteObjectModel.Contact(ctDetails);
+ct.create();
+// Later, in response to a page event...
+ct.set('Phone', '555-1212');
+ct.update();
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li><a data-toggle="collapse" data-target="#Upserting_Records">Upsert Records</a>
+                            <div id="Upserting_Records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+RemoteObjectModel.upsert({field_values}, callback_function)
+
+// Call upsert() on a Contact model, with no arguments
+// ct is a RemoteObjectModel.Contact that already has data
+ct.set('Phone', '(415) 777-1212');
+ct.upsert();
+// Call upsert() on a Contact model, passing in field values
+// ct is a RemoteObjectModel.Contact that already has data
+ct.upsert({Phone: '(415) 777-1212'});
+</pre>
+                                </div>
+                            </div>
+                        </li>  
+                        
+                        <li><a data-toggle="collapse" data-target="#Deleting_Records">Delete Records</a>
+                            <div id="Deleting_Records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+RemoteObjectModel.del([record_ids], callback_function)
+
+ctDetails = {FirstName: "Tobe", LastName: "Ornottobe"};
+ct = new RemoteObjectModel.Contact(ctDetails);
+ct.create();
+// After some thought, and the async operation completes...
+// It's not to be; delete the contact
+ct.del();
+</pre>
+                                </div>
+                            </div>
+                        </li> 
+                    </ul>
+            </div>
+            </div>
+
+            <div id="Remote_Objects_Query" class="subtabcontent">
+                                <pre>
+Критерии запроса записываются в форме, напоминающей JSON
+
+<span>&lt;</span>apex:remoteObjectsjsNamespace="RemoteObjectModel"<span>&gt;</span>   
+    <span>&lt;</span>apex:remoteObjectModel name="Contact" fields="FirstName,LastName"/<span>&gt;</span> 
+<span>&lt;</span>apex:remoteObjects<span>&gt;</span>
+
+<span>&lt;</span>script<span>&gt;</span>
+var ct = new RemoteObjectModel.Contact();
+ct.retrieve(
+    { where: {
+        FirstName: {eq: 'Marc'},
+        LastName: {eq: 'Benioff'}
+      },
+      orderby: [ {LastName: 'ASC'}, {FirstName: 'ASC'} ],
+      limit: 1 }, 
+
+    function(err, records) {
+        if (err) {
+            alert(err);
+        } else {
+            console.log(records.length);
+            console.log(records[0]);
+        }
+    }
+);
+<span>&lt;</span>/script<span>&gt;</span>
+</pre>
+               <h1>Перечень соответствия SOQL условиям</h1>
+                <pre>
+eq: 	equals
+ne: 	not equals
+lt: 	less than
+lte: 	less than or equals
+gt: 	greater than
+gte: 	greater than or equals
+like: 	string matching. As with SOQL, use “%” as a wildcard character.
+in: 	in, used for finding a value that matches any of a set of fixed values. 
+		Provide values as an array, for example, ['Benioff', 'Jobs', 'Gates'].
+nin: 	not in, used for finding a value that matches none of a set of fixed values. 
+		Provide values as an array, for example, ['Benioff', 'Jobs', 'Gates'].
+and: 	logical AND
+or: 	logical OR
+</pre>
+                <h1>Дополнительные условия</h1>
+                <pre>
+orderby: [ {Phone: "DESC NULLS LAST"} , {FirstName: "ASC"} ]
+
+В условиях сортировки допускается использовать до 3-х полей
+</pre>
+                <pre>
+limit and offset
+
+limit в пределах от 20 до 100 записей, по умолчанию - 20
+
+offset максимум 2000 записей
+</pre>                
+            </div>            
+            
+            <div id="Best_Practices" class="subtabcontent">
+                                <pre>
+	1. Учитывать настройки доступа для конкретного пользователя
+</pre>
+                <pre>
+	2. Учитывать границы транзакций. 
+	Например, если вы создаете запись счета-фактуры и связанные записи отдельной позиции, 
+	каждая запись сохраняется в отдельной транзакции. 
+	Если некоторые операции завершаются неудачно, а некоторые успешно, 
+	ваши данные могут остаться в несогласованном состоянии. 
+	Эта проблема не связана с надежностью. Если некоторые позиции не соответствуют правилу проверки, 
+	они не будут созданы, что приведет к неполному счету.
+</pre>
+                <pre>
+	3. Соответствующее размещение и тестирование бизнес-логики
+	Тщательно продумайте, где вы размещаете бизнес-логику своего приложения, особенно когда оно сложное. 
+	Когда вы создаете страницы, которые позволяют создавать, редактировать и удалять отдельные объекты, бизнес-логика минимальна.
+	Размещение этой бизнес-логики на стороне клиента Remote Objects и JavaScript может быть вполне уместным. 
+	Когда у вас есть более сложные бизнес-правила и процессы, может быть более эффективно удалить эту логику 
+	из уровня клиента и построить ее на стороне сервера.
+
+	Рассмотрите следующие моменты, когда вы решаете, куда поместить бизнес-логику вашей организации.
+
+	Безопасность и согласованность: 
+	помните, что пользователи могут потерять свое сетевое соединение в середине транзакции или изменить способ выполнения JavaScript 
+	вашей страницы с помощью Firebug и других инструментов. 
+
+	Тестируемость: 
+	бизнес-логика на стороне сервера может использовать множество инструментов, которые Salesforce предоставляет для тестирования. 
+	По этой причине рекомендуется ввести сложное поведение в Apex и использовать тестовую среду Apex, чтобы убедиться, 
+	что бизнес-логика работает так, как предполагается.
+
+	Производительность: 
+	если вашему процессу необходимо рассматривать многие записи как часть транзакции, но не отображать их в браузере, 
+	рекомендуется не отправлять эти данные клиенту и вместо этого обрабатывать данные «локально» на сервере. 
+	Подумайте, какие данные нужны вашей странице для своей работы, и убедитесь, что вы не копируете их без необходимости по проводам.
+</pre>
+                <pre>
+	4. Cложность процессов
+
+	Простые страницы менеджера контактов не предполагают наличие сложной логики, но многие бизнес-процессы предполагают. 
+
+	Всегда рассматривайте возможность разделения задач приложения на несколько уровней и сохраняйте их как можно более дискретными. 
+	Это называется «разделение интересов», и это классический образец программного обеспечения и передовой опыт.
+
+	Рассмотрите возможность размещения ваших правил целостности данных в триггерах и правилах проверки. 
+
+	Также рассмотрите возможность инкапсуляции правил вашего бизнес-процесса в коде Apex, который вы делаете доступным 
+	с помощью методов @RemoteAction, которые вы можете использовать с JavaScript Remoting или с сервисами SOAP или REST.
+</pre>
+                <pre>
+	5. В случае достаточно сложных задач приложения, выходящих за рамки возможностей Remote Objects, 
+	необходимо рассматривать для таких задач альтернативные инструменты, предлагаемые Salesforce, такие как
+	JavaScript remoting и AJAX Tool KIT
+</pre>
+            </div>
+
+            <div id="Remote_Objects_Limits" class="subtabcontent">
+                                <pre>
+1. За один запрос получение не более 100 записей
+2. OFFSET в запросе максимум 2000
+3. Не поддерживают тип данных Blob
+4. Установка значения false аттрибуту rendered компонента Remote Objects отключает его взаимодействие с кодом Javascript 
+и, соответственно, меняет логику поведения зависящих от него операций
+</pre>
+            </div>            
+            
+<div id="Callback_Functions" class="subtabcontent">
+    <pre>
+    function callback(Error error, Array results, Object event) { // ... }
+</pre>
+            </div>
+            
+            
+            <div id="JS_Remoting" class="subtabcontent">
+                <div style="display: inline-flex; margin-bottom:5vh;">
+                <div style="width:55%; display:inline-block; float:left; top:0.5em; position:relative;">
+                <pre>
+JavaScript remoting вызов имеет следующий синтаксис:
+
+[namespace.]controller.method(
+    [parameters...,]
+    callbackFunction,
+    [configuration]
+);
+
+configuration: { buffer: true, escape: true, timeout: 30000 }
+buffer
+escape
+timeout
+</pre>
+                </div>
+                <div style="width:45%; display:inline-block; float:left; top:0.5em; position:relative;">
+<pre>                
+@RemoteAction
+global static String Method(String objectName) { ... }
+</pre>
+                </div>
+                    </div>
+                
+                <input id="acctSearch" type="text"/>
+                <button onclick="getRemoteAccount()">Get Account</button>
+                <button onclick="alert('You will not whait!');">Alert</button>
+                <div id="responseErrors"></div>
+                <apex:pageBlock id="block">
+                    <apex:pageBlockSection id="blockSection" columns="2">
+                        <apex:pageBlockSectionItem id="firstItem">
+                            <span id="remoteAcctId"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem id="secondItem">
+                            <apex:outputText id="Industry"/>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>  
+<div style="width:60%; display:inline-block; float:left; top:0.5em; position:relative;">                
+                <pre>
+<span>&lt;</span>script<span>&gt;</span>
+function getRemoteAccount() {
+    var accountName = document.getElementById('acctSearch').value;
+    Visualforce.remoting.Manager.invokeAction(
+        '{<var>!$RemoteAction.saveExtention.getAccount</var>}',
+        accountName,
+        function(result, event){
+            if (event.status) {
+                // Get DOM IDs for HTML and Visualforce elements like this
+                document.getElementById('remoteAcctId').innerHTML = result.Id
+                document.getElementById(
+                "{<var>!$Component.block.blockSection.secondItem.Industry</var>}"
+                    ).innerHTML = result.Industry;
+            } else if (event.type === 'exception') {
+                document.getElementById("responseErrors").innerHTML =
+                    event.message + "<span>&lt;</span>br/<span>&gt;</span>\n<span>&lt;</span>pre<span>&gt;</span>" + event.where + "<span>&lt;</span>/pre<span>&gt;</span>";
+            } else {
+                document.getElementById("responseErrors").innerHTML = event.message;
+            }
+        },
+        {escape: true}
+    );
+}
+<span>&lt;</span>/script<span>&gt;</span>
+</pre>
+                </div>
+                <div style="width:40%; display:inline-block; float:left; top:0.5em; position:relative;">
+<pre>
+@RemoteAction
+global static Account getAccount(String accountName) {
+    account = [SELECT Id, Name, Phone, Type, Industry
+               FROM Account WHERE Name = :accountName];
+    Long timeDiff = 0;
+    DateTime firstTime = System.now();
+    do
+    {
+timeDiff = System.now().getTime() - firstTime.getTime();
+    }
+    while(timeDiff <span>&lt;</span>= 10000);        
+        
+    return account;
+} 
+</pre>
+                </div>
+            </div>
+
+            
+            <div id="AJAXRESTAPI" class="subtabcontent">   
+                <div style="width:35%; display:inline-block; float:left;">
+                <p>10 Accounts:</p>
+                <ul id="accountList">
+                </ul>
+                </div>
+                <div style="width:64%; display:inline-block; float:left; top:0.5em; position:relative;">
+                    <pre>
+  <span>&lt;</span>script<span>&gt;</span>
+    jQuery(document).ready(function($) {
+      $.ajax({url: '/services/data/v28.0/query?q=SELECT+Name+FROM+Account+LIMIT+10',
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader('Authorization', 'Bearer {<var>!$Api.Session_ID</var>}');
+          },
+          success: function(response) {
+            $.each(response.records, function(index, record) {
+              $('#accountList').append('<span>&lt;</span>li<span>&gt;</span>'+record.Name+'<span>&lt;</span>/li<span>&gt;</span>');
+            });
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            alert(jqXHR.status + ': ' + errorThrown);
+          }
+      });
+    });
+  <span>&lt;</span>/script<span>&gt;</span>
+  <span>&lt;</span>p<span>&gt;</span>10 Accounts:<span>&lt;</span>/p<span>&gt;</span>
+  <span>&lt;</span>ul id="accountList"<span>&gt;</span>
+  <span>&lt;</span>/ul<span>&gt;</span>
+</pre>
+                </div>
+            </div>         
+
+            <div id="GitHub" class="subtabcontent">
+                <a href="https://github.com/evgenykiselyov1/AJAX-in-Salesforce" target="_blank">AJAX in Salesforce on Git Hub</a>
+            </div>
+            
+            <div id="AJAXExternalAPI" class="subtabcontent">
+                <label for="number" style="font-size:14px; color:grey;">Enter a number</label><br/>
+                <input type="number" id="number" />
+
+                <button onclick="handleClick();">Get Jokes</button>
+                <span>
+                                <div class="tooltip">See code
+                                    <div class="tooltiptext">
+<pre style="background-color: #555; color: #fff;">
+                <span>&lt;</span>input type="number" id="number"<span>&gt;</span>
+                <span>&lt;</span>button onclick="<span style="background-color: yellow; color:black;">handleClick()</span>;"<span>&gt;</span>Get Jokes<span>&lt;</span>/button<span>&gt;</span>
+
+            function <span style="background-color: yellow; color:black;">handleClick()</span> {
+                const number = document.getElementById('number').value;
+                if (number) {
+                    <span style="background-color: blue;">handleAjaxRequest()</span>;
+                }
+            }
+            
+            function handleAjaxRequest() {
+                <span style="background-color: darkgrey;">const xhr = new XMLHttpRequest();</span>
+                const number = document.getElementById('number').value;
+                <span style="background-color: darkgrey;">const url = 'http://api.icndb.com/jokes/random/' + number;</span>
+                
+                <span style="background-color: darkgrey;">xhr.open('GET', url, true);</span>
+                <span style="background-color: darkgrey;">xhr.onload</span> = function() {
+                    if(this.status === 200) {
+                        const response = JSON.parse(this.responseText);
+                        let output = document.createElement('ul');
+                        document.getElementById("AJAXExternalAPI").appendChild(output);
+                        if(response.type === 'success') {
+                            response.value.forEach(function(joke){
+                                var li = document.createElement('li');
+                                li.innerHTML = joke.joke;
+                                output.appendChild(li);
+                            });
+                        }
+                    }
+                };
+                <span style="background-color: darkgrey;">xhr.send();</span>
+            }
+</pre>
+                                    </div>
+                                </div>
+                            </span>                 
+                
+            </div>
+            
+            <div id="AJAXTechnology" class="subtabcontent">
+                <div id="slider" class="slider"></div> 
+            </div>    
+            
+            <div id="AJAXActionTags" class="tabcontent">
+                <div class="tab">
+                    <button class="tablinks" name="actionFunction" onclick="openSubTopic(event, 'actionFunction', this.name)">actionFunction usage</button>
+                    <button class="tablinks" name="actionRegion" onclick="openSubTopic(event, 'actionRegion', this.name)">actionRegion usage</button>
+                    <button class="tablinks" name="actionSupport" onclick="openSubTopic(event, 'actionSupport_actionStatus', this.name)">actionSupport and actionStatus</button>     
+                    <button class="tablinks" name="actionPoller" onclick="openSubTopic(event, 'actionPoller', this.name)">actionPoller</button> 
+                </div>                
+            </div>
+            
+            <div id="actionFunction" class="subtabcontent">
+                <pre>
+	Обеспечивает поддержку вызова методов контроллера apex непосредственно из кода JavaScript с использованием запроса AJAX. 
+	Компонент <span>&lt;</span>apex:actionFunction<span>&gt;</span> должен быть дочерним по отношению к <span>&lt;</span>apex:form<span>&gt;</span> компоненту.
+</pre>
+                <apex:form >
+                    <div style="display: contents;">
+                        <select id="selectedType" size="1" onchange="getType()" >
+                            <apex:repeat value="{!allObjects}" var="obj" > 
+                                <option value="{!obj}">{!obj}</option>
+                            </apex:repeat>
+                        </select> 
+                    </div>
+                    <apex:actionFunction id="that" name="submitActionFunction" action="{!SelectType}" reRender="Pageblock"><!---->
+                        <apex:param name="obj" assignTo="{!selectedType}" value="" />
+                    </apex:actionFunction>
+                    
+                    <apex:outputPanel id="page" layout="block" style="margin:5px;padding:10px;padding-top:2px; border: 1px solid brown;">
+                        
+                        <apex:outputPanel id="top" layout="block" style="margin:5px;padding:10px;padding-top:2px; border-bottom: 1px solid;">
+                            <apex:outputLabel value="Search" style="font-weight:Bold;padding-right:10px;" for="txtSearch"/>
+                            <apex:inputText id="txtSearch" value="{!searchString}" onkeyup="search();"/>
+                            <span>                    
+                                <div class="tooltip">See code
+                                    <div class="tooltiptext">
+                                        <!--<code>-->
+<pre style="background-color: #555; color: #fff;">
+<span>&lt;</span>apex:outputLabel value="Search" style="font-weight:Bold;padding-right:10px;" for="txtSearch"/<span>&gt;</span>
+<span>&lt;</span>apex:inputText id="txtSearch" value="{!searchString}" onkeyup="<span style="background-color:blue;">search();</span>"/<span>&gt;</span>
+<span>&lt;</span>apex:actionFunction action="{<var><span style="background-color:darkgrey;">!Search</span></var>}" name="<span style="background-color:black;">searchActionFunction</span>" rerender="searchResults"<span>&gt;</span>
+<span>&lt;</span>apex:param name="obj" assignTo="{!selectedType}" value="" /<span>&gt;</span>
+<span>&lt;</span>/apex:actionFunction<span>&gt;</span>
+
+<span>&lt;</span>script<span>&gt;</span>
+function <span style="background-color:blue;">search()</span>{
+	var sel=document.getElementById('selectedType').selectedIndex;
+	var options=document.getElementById('selectedType').options;
+	var obj = options[sel].text;
+<span style="background-color:black;">searchActionFunction</span>(obj);
+}
+<span>&lt;</span>/script<span>&gt;</span> 
+
+<span>&lt;</span>apex<span>&gt;</span>
+public PageReference <span style="background-color:darkgrey;">search()</span> {
+	runSearch();
+	return null;
+}
+<span>&lt;</span>/apex<span>&gt;</span>
+</pre>
+                                        <!--</code>-->
+                                    </div>
+                                </div>
+                            </span>                           
+                            <!--<span style="padding-left:5px"><apex:commandButton id="btnGo" value="Go" action="{!Search}" rerender="searchResults"></apex:commandButton></span>-->
+                            <span style="padding-left:5px"><apex:commandButton id="btnSave" onclick="showMap();" value="Save" rerender="searchResults"></apex:commandButton></span>
+                            <span>                    
+                                <div class="tooltip">See code
+                                    <div class="tooltiptext" style="margin-left: -10em;">
+                                        
+<pre style="background-color: #555; color: #fff;">
+<span>&lt;</span>apex:commandButton id="btnSave" onclick="<span style="background-color:blue;">showMap();</span>" value="Save" rerender="searchResults"/<span>&gt;</span>
+<span>&lt;</span>apex:actionFunction action="{<var><span style="background-color:darkgrey;">!getObjectToSave</span></var>}" name="<span style="background-color:black;">getObjectToSaveFunction</span>" rerender="Pageblock"<span>&gt;</span>
+<span>&lt;</span>apex:param name="Arr1" assignTo="{!newFieldsNames}" value="" /<span>&gt;</span>
+<span>&lt;</span>apex:param name="Arr2" assignTo="{!newFields}" value="" /<span>&gt;</span>
+<span>&lt;</span>/apex:actionFunction<span>&gt;</span>
+
+<span>&lt;</span>script<span>&gt;</span>
+function <span style="background-color:blue;">showMap()</span>{
+	var selectionMap = new Map();
+	for(var i = 0; i <span>&lt;</span> Arr1.length; i++){
+		selectionMap.set(Arr1[i], Arr2[i]);
+	}
+	<span style="background-color:black;">getObjectToSaveFunction</span>(Arr1.toString(), Arr2.toString());
+}
+<span>&lt;</span>/script<span>&gt;</span>
+
+<span>&lt;</span>apex<span>&gt;</span>
+public void <span style="background-color:darkgrey;">getObjectToSave()</span>{
+				/*Some code */
+	<span style="background-color:darkgrey;">update sObjectsToUpdate;</span>
+}
+<span>&lt;</span>/apex<span>&gt;</span>
+</pre>
+                                    </div>
+                                </div>
+                            </span>                             
+                            
+                        </apex:outputPanel>
+                        
+                        <apex:outputPanel id="pnlSearchResults" style="margin:10px;height:200px;overflow-Y:auto;" layout="block">
+                            <apex:pageBlock id="searchResults"> 
+                                <apex:pageBlockTable value="{!results}" var="a" id="tblResults" >
+                                    <apex:column >
+                                        <apex:facet name="header">
+                                            <apex:outputPanel >Name</apex:outputPanel>
+                                        </apex:facet>
+                                        <apex:outputLabel for="{!a.Id}" value="{!a.Name}" onclick="getObject(this)" rendered="{!NOT(ISNULL(a.Id))}" ></apex:outputLabel>
+                                        <!-- <apex:outputLink onclick="getObject(this)" rendered="{!NOT(ISNULL(a.Id))}" disabled="true" >{!a.Name}</apex:outputLink>-->
+                                        <!--<apex:outputLink value="{!URLFOR($Action.Account.View, a.Id)}" rendered="{!NOT(ISNULL(a.Id))}" target="_blank">{!a.Name}</apex:outputLink>-->   <!--value="javascript:top.window.opener.lookupPick2('{!FormTag}','{!TextBox}_lkid','{!TextBox}','{!a.Id}','{!a.Name}', false)"-->  
+                                    </apex:column>
+                                </apex:pageBlockTable>
+                            </apex:pageBlock>
+                        </apex:outputPanel>
+                        <apex:actionFunction action="{!Search}" name="searchActionFunction" rerender="searchResults">
+                            <apex:param name="obj" assignTo="{!selectedType}" value="" />
+                        </apex:actionFunction>         
+                    </apex:outputPanel>      
+                    <apex:pageBlock id="Pageblock" title="Pageblock Table">
+                        <apex:pageblockTable value="{!sObjectWithFields}" var="f" id="blockTable">
+                            <apex:column value="{!f.fieldName}" id="col1"/>
+                            <apex:column value="{!f.fieldType}" id="col2"/>
+                            <apex:column id="col3">
+                                <apex:inputText rendered="{!f.fieldType == 'STRING' || 
+                                                          f.fieldType == 'REFERENCE' || 
+                                                          f.fieldType == 'DOUBLE' || 
+                                                          f.fieldType == 'ADDRESS' || 
+                                                          f.fieldType == 'PHONE' || 
+                                                          f.fieldType == 'URL' ||
+                                                          f.fieldType == 'CURRENCY' ||
+                                                          f.fieldType == 'DATETIME' ||
+                                                          f.fieldType == 'DATE' ||
+                                                          f.fieldType == 'INTEGER' ||
+                                                          f.fieldType == 'ID'
+                                                          }" value="{!f.fieldValue}" onkeyup="inputTextChange(this);"/>
+                                <apex:inputCheckbox rendered="{!f.fieldType == 'BOOLEAN'}" selected="{!f.fieldValue}" onchange="inputTextChange(this);" />
+                                <apex:inputTextarea rendered="{!f.fieldType == 'TEXTAREA'}" value="{!f.fieldValue}" onkeyup="inputTextChange(this);"/>   
+                                
+                                <apex:outputPanel rendered="{!f.fieldType == 'PICKLIST'}">
+                                    
+                                    <select size="1" value="{!f.fieldValue}" onchange="inputTextChange(this);"> <!--value="{!selected}"-->
+                                        <apex:repeat value="{!f.pickLists[f.fieldType]}" var="picks" rendered="{!f.fieldType == 'PICKLIST'}"> 
+                                            <apex:selectOption itemValue="{!picks}" value="{!picks}">{!picks}</apex:selectOption>
+                                            <option value="{!picks}" selected="{!IF((picks == f.fieldValue), selected, false)}">{!picks}</option> <!--selected="{!IF((picks == {!f.fieldValue}), true, false)}"    selected="{!IF((TEXT(picks) == f.fieldValue), selected, '')}"-->
+                                        </apex:repeat>
+                                    </select>
+                                </apex:outputPanel>
+                            </apex:column>
+                        </apex:pageblockTable>
+                    </apex:pageBlock>
+                    
+                    <apex:actionFunction action="{!getObjectWithFields}" name="getObjectActionFunction" rerender="Pageblock" oncomplete="getSelectedInLists()">
+                        <apex:param name="objID" assignTo="{!sObjectID}" value="" />
+                    </apex:actionFunction> 
+                    
+                    <apex:actionFunction action="{!getObjectToSave}" name="getObjectToSaveFunction" rerender="Pageblock">
+                        <apex:param name="Arr1" assignTo="{!newFieldsNames}" value="" />
+                        <apex:param name="Arr2" assignTo="{!newFields}" value="" />
+                    </apex:actionFunction> 
+                    
+                </apex:form>
+            </div>
+            
+            <div id="actionRegion" class="subtabcontent">
+                <pre>
+	Этот тэг использует запрос AJAX для определенного поля или компонента. 
+
+	Сервером обрабатываются только компоненты в теле actionRegion.
+
+	Это позволяет обойти правила проверки и повысить производительность страницы Visualforce.
+
+	Компонент, в котором указан метод должен быть в теле actionRegion, иначе сервер запросит все компоненты из формы.
+</pre>
+                <br/>
+                <input type="checkbox" id="IncNameToActReg" value="Bike" onclick="includeNameToActionReg();"/> Include Name to actionRegion<br/>
+                
+                <apex:pagemessages id="msgs"></apex:pagemessages>
+                <div id="NoNameInActReg">
+                    <div style="width:35%; display:inline-block; float:left;">  
+                        <apex:form >
+                            <apex:pageblock id="pb">
+                                <table id="actionRegionTable">
+                                    <apex:actionRegion >
+                                        <tr>
+                                            <td> <apex:outputLabel value="Enter Account Number"> </apex:outputLabel> </td>
+                                            <td>
+                                                <apex:inputtext value="{!reqAccNumber}"/>
+                                                <apex:commandButton value="Retrive" action="{!fillRecord}" rerender="pb,msgs"/>
+                                            </td>
+                                        </tr> 
+                                    </apex:actionRegion>
+                                    <tr>
+                                        <td> <apex:outputLabel value="Account Name"> </apex:outputLabel> </td>
+                                        <td>
+                                            <apex:inputField value="{!accObj.Name}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td> <apex:outputLabel value="Account Type"> </apex:outputLabel> </td>
+                                        <td>  <apex:inputField value="{!accObj.Type}"/> </td>
+                                    </tr>
+                                </table>
+                            </apex:pageblock>
+                        </apex:form>  
+                    </div>
+                    
+                    <div style="width:64%; display:inline-block; float:left; top:0.5em; position:relative;">
+                        <pre>
+<span>&lt;</span>table id="actionRegionTable"<span>&gt;</span>
+ <span>&lt;</span><span style="background-color:yellow;">apex:actionRegion</span><span>&gt;</span>
+  <span>&lt;</span>tr<span>&gt;</span>
+   <span>&lt;</span>td<span>&gt;</span> <span>&lt;</span>apex:outputLabel value="Enter Account Number"<span>&gt;</span> <span>&lt;</span>/apex:outputLabel<span>&gt;</span> <span>&lt;</span>/td<span>&gt;</span>
+   <span>&lt;</span>td<span>&gt;</span>
+    <span>&lt;</span>apex:inputtext value="{!reqAccNumber}"/<span>&gt;</span>
+    <span>&lt;</span>apex:commandButton value="Retrive" action="{<var><span style="background-color:darkgrey;">!fillRecord</span></var>}" rerender="pb,msgs"/<span>&gt;</span>
+   <span>&lt;</span>/td<span>&gt;</span>
+  <span>&lt;</span>/tr<span>&gt;</span>
+  <span>&lt;</span><span style="background-color:yellow;">/apex:actionRegion</span><span>&gt;</span>
+  <span>&lt;</span>tr<span>&gt;</span>
+   <span>&lt;</span>td<span>&gt;</span> <span>&lt;</span>apex:outputLabel value="Account Name"<span>&gt;</span> <span>&lt;</span>/apex:outputLabel<span>&gt;</span> <span>&lt;</span>/td<span>&gt;</span>
+   <span>&lt;</span>td<span>&gt;</span>
+    <span>&lt;</span>apex:inputField value="{!accObj.Name}"/<span>&gt;</span>
+   <span>&lt;</span>/td<span>&gt;</span>
+  <span>&lt;</span>/tr<span>&gt;</span>
+  <span>&lt;</span>tr<span>&gt;</span>
+   <span>&lt;</span>td<span>&gt;</span> <span>&lt;</span>apex:outputLabel value="Account Type"<span>&gt;</span> <span>&lt;</span>/apex:outputLabel<span>&gt;</span> <span>&lt;</span>/td<span>&gt;</span>
+   <span>&lt;</span>td<span>&gt;</span> <span>&lt;</span>apex:inputField value="{!accObj.Type}"/<span>&gt;</span> <span>&lt;</span>/td<span>&gt;</span>
+  <span>&lt;</span>/tr<span>&gt;</span>
+<span>&lt;</span>/table<span>&gt;</span>
+</pre>
+                    </div>
+                    
+                </div>
+                <div id="WithNameInActReg" style="display:none;">
+                    <div style="width:35%; display:inline-block; float:left;">
+                        <apex:form >
+                            <apex:pageblock id="pb">
+                                <table id="actionRegionTable">
+                                    <apex:actionRegion >
+                                        <tr>
+                                            <td> <apex:outputLabel value="Enter Account Number"> </apex:outputLabel> </td>
+                                            <td>
+                                                <apex:inputtext value="{!reqAccNumber}"/>
+                                                <apex:commandButton value="Retrive" action="{!fillRecord}" rerender="pb,msgs"/>
+                                            </td>
+                                        </tr> 
+                                        <tr>
+                                            <td> <apex:outputLabel value="Account Name"> </apex:outputLabel> </td>
+                                            <td>
+                                                <apex:inputField value="{!accObj.Name}"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td> <apex:outputLabel value="Account Type"> </apex:outputLabel> </td>
+                                            <td>  <apex:inputField value="{!accObj.Type}"/> </td>
+                                        </tr>
+                                    </apex:actionRegion> 
+                                </table>
+                            </apex:pageblock>
+                        </apex:form>  
+                    </div>
+                    <div style="width:64%; display:inline-block; float:left; top:0.5em; position:relative;">
+<pre>
+<span>&lt;</span>table id="actionRegionTable"<span>&gt;</span>
+ <span>&lt;</span><span style="background-color:yellow;">apex:actionRegion</span><span>&gt;</span>
+ <span>&lt;</span>tr<span>&gt;</span>
+  <span>&lt;</span>td<span>&gt;</span> <span>&lt;</span>apex:outputLabel value="Enter Account Number"<span>&gt;</span> <span>&lt;</span>/apex:outputLabel<span>&gt;</span> <span>&lt;</span>/td<span>&gt;</span>
+  <span>&lt;</span>td<span>&gt;</span>
+   <span>&lt;</span>apex:inputtext value="{!reqAccNumber}"/<span>&gt;</span>
+   <span>&lt;</span>apex:commandButton value="Retrive" action="{<var><span style="background-color:darkgrey;">!fillRecord</span></var>}" rerender="pb,msgs"/<span>&gt;</span>
+  <span>&lt;</span>/td<span>&gt;</span>
+ <span>&lt;</span>/tr<span>&gt;</span>
+ <span>&lt;</span>tr<span>&gt;</span>
+  <span>&lt;</span>td<span>&gt;</span> <span>&lt;</span>apex:outputLabel value="Account Name"<span>&gt;</span> <span>&lt;</span>/apex:outputLabel<span>&gt;</span> <span>&lt;</span>/td<span>&gt;</span>
+  <span>&lt;</span>td<span>&gt;</span>
+   <span>&lt;</span>apex:inputField value="{!accObj.Name}"/<span>&gt;</span>
+  <span>&lt;</span>/td<span>&gt;</span>
+ <span>&lt;</span>/tr<span>&gt;</span>
+ <span>&lt;</span>tr<span>&gt;</span>
+  <span>&lt;</span>td<span>&gt;</span> <span>&lt;</span>apex:outputLabel value="Account Type"<span>&gt;</span> <span>&lt;</span>/apex:outputLabel<span>&gt;</span> <span>&lt;</span>/td<span>&gt;</span>
+  <span>&lt;</span>td<span>&gt;</span> <span>&lt;</span>apex:inputField value="{!accObj.Type}"/<span>&gt;</span> <span>&lt;</span>/td<span>&gt;</span>
+ <span>&lt;</span>/tr<span>&gt;</span>
+ <span>&lt;</span><span style="background-color:yellow;">/apex:actionRegion</span><span>&gt;</span>
+<span>&lt;</span>/table<span>&gt;</span>
+</pre>
+                    </div>
+                </div>                
+            </div>
+            
+            <div id="actionSupport_actionStatus" class="subtabcontent">
+<pre>
+	apex:actionStatus
+	Компонент, отображающий состояние запроса AJAX на обновление. AJAX-запрос может быть в процессе или завершен
+	apex:actionSupport
+	Добавляет поддержку AJAX к другому компоненту, позволяя серверу асинхронно обновлять компонент 
+	при возникновении определенного события, например, при нажатии кнопки или при наведении курсора мыши
+</pre>
+                <div style="position:relative; width:35%; display:inline-block; float:left;">
+                    <apex:form >
+                        <apex:outputpanel id="counter">
+                            <apex:outputText value="Click Me!: {!count}"/>
+                            <apex:actionSupport event="onclick"
+                                                action="{!incrementCounter}"
+                                                rerender="counter" status="counterStatus"/>
+                        </apex:outputpanel>
+                        <apex:actionStatus id="counterStatus"
+                                           startText=" incrementing..."
+                                           stopText=""/>
+                    </apex:form>
+                </div>
+                <div style="position:relative; width:64%; display:inline-block; float:left; top:0.5em">
+<pre>
+<span>&lt;</span>apex:form<span>&gt;</span>
+<span>&lt;</span>apex:outputpanel id="counter"<span>&gt;</span>
+<span>&lt;</span>apex:outputText value="Click Me!: {!count}"/<span>&gt;</span>
+<span>&lt;</span><span style="background-color:yellow;">apex:actionSupport</span> event="onclick"
+action="{<var><span style="background-color:darkgrey;">!incrementCounter</span></var>}"
+rerender="counter" status="counterStatus"/<span>&gt;</span>
+<span>&lt;</span>/apex:outputpanel<span>&gt;</span>
+<span>&lt;</span><span style="background-color:yellow;">apex:actionStatus</span> id="counterStatus"
+startText=" incrementing..."
+stopText=""/<span>&gt;</span>
+<span>&lt;</span>/apex:form<span>&gt;</span>
+</pre>
+                </div>                
+                
+            </div>
+            
+            <div id="actionPoller" class="subtabcontent">
+<pre>
+	Таймер, который отправляет запрос AJAX на обновление на сервер в соответствии с указанным интервалом времени. 
+	Запрос на обновление может затем привести к полному или частичному обновлению страницы. 
+	Следует избегать использования этого компонента с расширенными списками apex:enhancedList
+</pre>
+                <div style="position:relative; width:35%; display:inline-block; float:left;">
+                <apex:form >
+                    <apex:outputpanel id="count">
+                    <apex:actionSupport event="onclick" action="{!startIncrementCounter1}" rerender="count"/>
+                    <apex:outputText value="Watch this counter: {!count1}" id="counter"/>
+                    <apex:actionPoller action="{!incrementCounter1}" reRender="counter" interval="5" enabled="{!IF((count1 > 0) && (count1 < 5),true,false)}"/><!--enabled="{!isEnabled}"-->
+                    </apex:outputpanel>
+                </apex:form>                    
+                </div>
+                <div style="position:relative; width:64%; display:inline-block; float:left; top:0.5em">
+<pre>
+<span>&lt;</span>apex:form<span>&gt;</span><br/>
+ <span>&lt;</span>apex:outputpanel id="count"<span>&gt;</span><br/>
+ <span>&lt;</span><span style="background-color:yellow;">apex:actionSupport event="onclick"</span> action="{<var><span style="background-color:darkgrey;">!startIncrementCounter1</span></var>}" rerender="count"/<span>&gt;</span><br/>
+ <span>&lt;</span>apex:outputText value="Watch this counter: {!count1}" id="counter"/<span>&gt;</span><br/>
+ <span>&lt;</span><span style="background-color:yellow;">apex:actionPoller</span> action="{<var><span style="background-color:darkgrey;">!incrementCounter1</span></var>}" reRender="counter" interval="5" 
+ enabled="{<var>!IF((count1 > 0) <span>&amp;</span><span>&amp;</span> (count1 <span>&lt;</span> 5)</var>,true,false)}"/<span>&gt;</span><br/>
+ <span>&lt;</span>/apex:outputpanel<span>&gt;</span><br/>
+<span>&lt;</span>/apex:form<span>&gt;</span>
+</pre>                     
+                </div>                  
+                
+            </div>
+            
+            <div id="AJAXToolKIT" class="tabcontent" >
+                <div class="tab">
+                    <button class="tablinks" name="When_to_Use" onclick="openSubTopic(event, 'When_to_Use_the_AJAX_Toolkit', this.name)">When to Use the Toolkit</button>
+                    <button class="tablinks" name="API_Calls" onclick="openSubTopic(event, 'API_Calls_and_the_AJAX_Toolkit', this.name)">API Calls and the Toolkit</button>     
+                    <!--<button class="tablinks" onclick="openSubTopic(event, 'SOAP_Header_Options_with_the_AJAX_Toolkit')">SOAP Header Options with the Toolkit</button> -->
+                    <button class="tablinks" name="Error_Handling" onclick="openSubTopic(event, 'Error_Handling_with_the_AJAX_Toolkit', this.name)">Error Handling with the Toolkit</button> 
+                    <button class="tablinks" name="Working_with_Toolkit" onclick="openSubTopic(event, 'Working_with_the_AJAX_Toolkit', this.name)">Working with the Toolkit Tools</button>
+                    <button class="tablinks" name="ToolKIT_Issues" onclick="openSubTopic(event, 'ToolKITExamples', this.name)">ToolKIT Issues and WebService</button>      
+                </div>
+            </div>
+            
+            <div id="When_to_Use_the_AJAX_Toolkit" class="subtabcontent">
+<pre>
+		Работа с небольшими объемами данных.
+
+		Отображение и сохранение небольшого количества полей для многих записей.
+
+		DML операции для небольшого количества записей небольшого объема каждая
+		
+		Выполнение одного или нескольких простых вычислений, затем обновление записи.
+</pre>
+            </div>
+            
+            <div id="API_Calls_and_the_AJAX_Toolkit" class="subtabcontent" style="overflow: hidden; ">
+                <div class="tab">
+                    <button class="tablinks" name="Calls" onclick="openSubSubTopic(event, 'Sync_and_Async_Calls_AJAX_Toolkit', this.name)">Synchronous and Asynchronous Calls with the AJAX Toolkit</button>
+                    <button class="tablinks" name="Object_Functions" onclick="openSubSubTopic(event, 'Object_Functions', this.name)">Object Functions</button>
+                    <button class="tablinks" name="Data_Types" onclick="openSubSubTopic(event, 'Data_Types_in_AJAX_Toolkit', this.name)">Data Types in AJAX Toolkit</button>     
+                    <button class="tablinks" name="Context_Variable" onclick="openSubSubTopic(event, 'source_Context_Variable', this.name)">source Context Variable</button> 
+                </div>
+            </div>
+            
+            <div id="SOAP_Header_Options_with_the_AJAX_Toolkit" class="subtabcontent">
+                <h3>Все параметры заголовка в SOAP API поддерживаются в toolkit, но они указываются иначе, чем в API.</h3>
+                <h3>Синтаксис для указания параметров заголовка</h3>
+                <pre>
+	• Для заголовоков, которые имеют только одну опцию, такой как queryOptions: 
+		sforce.connection.header_option_name="value";
+	• Для заголовоков, которые имеют более, чем одну опцию, такой как assignmentRuleHeader:
+		sforce.connection.header_name = {} 
+		sforce.connection.header_name.header_option_name="value";</pre>
+                <h3>Допустимые параметры</h3>
+                <pre>   
+	Ниже допустимые опции, упорядоченные по соответствующему имени заголовка SOAP в API для справки
+		• From the assignmentRuleHeader:
+			assignmentRuleId
+			useDefaultRule.
+
+		• From callOptions:
+			client
+			defaultNamespace
+
+		• From emailHeader:
+			triggerAutoResponseEmail
+			triggerOtherEmail
+			triggerUserEmail
+
+		• From loginScopeHeader:
+			organizationId
+			portalId
+
+		• From mruHeader:
+			updateMru
+
+		• From queryOptions:
+			batchSize
+
+		• From sessionHeader:
+			sessionId
+
+		• From userTerritoryDeleteHeader:
+			transferToUserId 
+</pre>                
+            </div>
+            
+            <div id="Error_Handling_with_the_AJAX_Toolkit" class="subtabcontent">
+				<pre>
+                Если API вызов терпит неудачу, то AJAX Toolkit выбрасывает исключение. 
+                Исключение содержит всю доступную информацию об ошибках.
+                Для синхронных вызовов можно использовать <span style="font-weight: bold;">try-catch</span> конструкцию:
+                
+                        try{ 
+                            result = sforce.connection.login("email", "&#60;password&#62;&#60;securitytoken&#62;");
+                            console.log("logged in with session id " + result.sessionId);
+                        }catch(error) {
+                            if (error.faultcode.indexOf("INVALID_LOGIN") != -1) {
+                                console.log("check your username and passwd, invalid login");
+                            } else { console.log(error); 
+                                   } 
+                        } 
+
+                Для асинхронных вызовов можно использовать <span style="font-weight: bold;">onFailure</span> функцию внутри функции <span style="font-weight: bold;">callback</span> 
+				</pre>                
+                
+            </div>
+            
+            <div id="Working_with_the_AJAX_Toolkit" class="subtabcontent" style="height:90vh; overflow-y: scroll;"> 
+                <div class="tab" style="position:relative; list-style: none; float: center; display: block; text-align: center;">
+                    <!--<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Simple collapsible</button>-->
+                    
+                    <ul style="text-align: center; overflow-y: scroll;">
+                        <li><a data-toggle="collapse" data-target="#demo_login">login</a>
+                            <div id="demo_login" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+try{
+	var result = sforce.connection.login("myname@myemail.com", "password");
+	log("logged in with session id " + result.sessionId);
+}catch(error) {
+	if (error.faultcode.indexOf("INVALID_LOGIN") != -1) {
+		log("check your username and passwd, invalid login");
+	} else {
+		log(error);
+	}
+}
+</pre>                                    
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <a data-toggle="collapse" data-target="#demo_query">query</a>
+                            <div id="demo_query" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+result = sforce.connection.query("Select Name, Id from User");
+records = result.getArray("records");
+for (var i=0; i <span>&lt;</span> records.length; i++) {
+	var record = records[i];
+	log(record.Name + " -- " + record.Id);
+}
+</pre>
+                                </div>
+                            </div>  
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_queryMore">queryMore</a>
+                            <div id="demo_queryMore" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; width:50%; position:relative; float:left; background-color: dimgrey;">
+                                    <h1 style="text-decoration: underline;">Synchronous</h1>
+                                    
+                                    <pre>
+var result = sforce.connection.query("select name, id from account");
+var queryMore = true;
+while (queryMore) {
+	var records = result.getArray("records");
+	var sb = new sforce.StringBuffer();
+	for (var i = 0; i <span>&lt;</span> records.length; i++) {
+		sb.append(records[i].Name).append(",");
+	}
+	log(records.length);
+	log(sb.toString());
+	if (result.getBoolean("done")) {
+		queryMore = false;
+	} else {
+		result = sforce.connection.queryMore(result.queryLocator);
+	}
+}
+
+</pre>
+                                </div>
+                                <div style="text-align:left; width:50%; position:relative; float:left; background-color: dimgrey;">
+                                    <h1 style="text-decoration: underline;">Asynchronous</h1> 
+                                    
+                                    <pre>
+sforce.connection.query("Select Name,Id from Account", {
+onSuccess : success, onFailure : log });
+
+function success(result) {
+	var records = result.getArray("records");
+	var sb = new sforce.StringBuffer();
+	for (var i=0; i <span>&lt;</span> records.length; i++) {
+		var record = records[i];
+		sb.append(record.Name).append(",");
+	}
+	log(records.length);
+	log(sb.toString());
+	if (result.queryLocator) {
+		sforce.connection.queryMore(result.queryLocator, {
+		onSuccess : success, onFailure : log});
+	}
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_queryAll">queryAll</a>
+                            <div id="demo_queryAll" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var result = sforce.connection.queryAll("Select Name, Id from Account");
+var records = result.getArray("records");
+for (var i=0; i <span>&lt;</span> records.length; i++) {
+	var record = records[i];
+	log(record.Name + " -- " + record.Id);
+}
+            </pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_Query_Child_to_Parent">Relationship Query Child to Parent</a>
+                            <div id="demo_Query_Child_to_Parent" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var result = sforce.connection.query("SELECT c.Id, c.firstname, " +
+"c.lastname, c.leadsource, a.Id, a.name, a.industry, c.accountId " +
+"FROM Contact c, c.account a ORDER BY leadsource LIMIT 10");
+var it = new sforce.QueryResultIterator(result);
+while(it.hasNext()) {
+	var record = it.next();
+	var accountName = record.Account ? record.Account.Name : null;
+	log( record.FirstName + " " + record.LastName +
+	" in account " + accountName);
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_Query_Parent_to_Child">Relationship Query Example Parent to Child</a>
+                            <div id="demo_Query_Parent_to_Child" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var result = sforce.connection.query("select a.Name, a.Industry, " +
+"(select c.LastName, c.LeadSource from a.Contacts c) " +
+"from account a order by industry limit 100");
+var ait = new sforce.QueryResultIterator(result);
+while(ait.hasNext()) {
+	var account = ait.next();
+	var contacts = [];
+	if (account.Contacts) {
+		var cit = new sforce.QueryResultIterator(account.Contacts);
+		while(cit.hasNext()) {
+			var contact = cit.next();
+			contacts.push(contact.LastName);
+		}
+	}
+	log(account.Name + ": " + contacts.join(","));
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_create_records">create records</a>
+                            <div id="demo_create_records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var account = new sforce.SObject("Account");
+account.Name = "my new account";
+var result = sforce.connection.create([account]);
+if (result[0].getBoolean("success")) {
+	log("new account created with id " + result[0].id);
+} else {
+	log("failed to create account " + result[0]);
+} 
+</pre>
+                                    
+                                    <h1 style="text-decoration: underline;">Batch create Example:</h1>
+                                    
+                                    <pre>
+var accounts = [];
+for (var i=0; i <span>&lt;</span> 10; i++) {
+	var account = new sforce.SObject("Account");
+	account.Name = "my new account " + i;
+	accounts.push(account);
+}
+var result = sforce.connection.create(accounts);
+for (var i=0; i <span>&lt;</span> result.length; i++) {
+	if (result[i].getBoolean("success")) {
+		log("new account created with id " + result[i].id);
+	} else {
+		log("failed to create account " + result[i]);
+	}
+}
+</pre>
+                                    
+                                    <h1 style="text-decoration: underline;">Async</h1>
+                                    
+                                    <pre>
+var account = new sforce.SObject("Account");
+account.Name = "my new account";
+sforce.connection.create([account],{onSuccess : success, onFailure : failed});
+
+function success(result) {
+	if (result[0].getBoolean("success")) {
+		log("new account created with id " + result[0].id);
+	} else {
+		log("failed to create account " + result[0]);
+	}
+}
+
+function failed(error) {
+	log("An error has occurred " + error);
+}
+</pre>                  
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_delete_records">delete records</a>
+                            <div id="demo_delete_records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <h3>create an example account</h3>
+                                    <pre>
+var account = new sforce.SObject("Account");
+account.Name = "my new account";
+var result = sforce.connection.create([account]);
+if (result[0].getBoolean("success")) {
+	log("new account created with id " + result[0].id);
+	account.Id = result[0].id;
+} else {
+	throw ("failed to create account " + result[0]);
+}
+</pre>
+									<h3>now delete the example account</h3>
+                                    <pre>
+var delResult = sforce.connection.deleteIds([account.Id]);
+if (delResult[0].getBoolean("success")) {
+	log("account with id " + result[0].id + " deleted");
+} else {
+	log("failed to delete account " + result[0]);
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_merge_records">merge records</a>
+                            <div id="demo_merge_records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+//create two accounts
+var account1 = new sforce.SObject("Account");
+account1.Name = "myName";
+account1.Phone = "2837484894";
+var account2 = new sforce.SObject("Account");
+account2.Name = "anotherName";
+account2.Phone = "938475950";
+var result = sforce.connection.create([account1, account2]);
+if (result.length != 2) throw "create failed";
+account1.id = result[0].id;
+account2.id = result[1].id;
+//create merge request
+var request = new sforce.MergeRequest();
+request.masterRecord = account1;
+request.recordToMergeIds = account2.id;
+//call merge
+result = sforce.connection.merge([request]);
+if (result[0].getBoolean("success")) {
+	log("merge success " + result[0]);
+} else {
+	log("merge failed " + result[0]);
+}
+</pre>  
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_process_query">process query</a>
+                            <div id="demo_process_query" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var request = new sforce.ProcessSubmitRequest();
+request.objectId = "id of object that has a workflow rule on it"; // valid id
+request.comments = "automated approval";
+var request2 = new sforce.ProcessSubmitRequest();
+request2.objectId = 'id of object that does NOT have a workflow rule on it' ; // valid id,
+not useful for workflow
+request2.comments = "approval that will fail";
+var processRes = sforce.connection.process([request, request2]);
+if(!processRes[0].getBoolean('success')){
+	log("The first process request failed and it should not have");
+}
+if(processRes[1].getBoolean('success')){
+	log("The second process request succeeded and it should not have");
+}
+log(processRes[0].errors);
+log(processRes[1].errors);
+</pre>       
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_update_records">update records</a>
+                            <div id="demo_update_records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+//create an account
+var account = new sforce.SObject("Account");
+account.Name = "myName";
+account.Phone = "2837484894";
+result = sforce.connection.create([account]);
+//update that account
+account.id = result[0].id;
+account.Phone = "12398238";
+result = sforce.connection.update([account]);
+if (result[0].getBoolean("success")) {
+	log("account with id " + result[0].id + " updated");
+} else {
+	log("failed to update account " + result[0]);
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_undelete_records">undelete records</a>
+                            <div id="demo_undelete_records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var account = new sforce.SObject("Account");
+account.Name = "account to delete";
+account.Phone = "2837484894";
+result = sforce.connection.create([account]);
+account.id = result[0].id;
+log("account created " + account);
+result = sforce.connection.deleteIds([account.id]);
+if (!result[0].getBoolean("success")) throw "delete failed";
+log("account deleted " + result);
+result = sforce.connection.undelete([account.id]);
+if (!result[0].getBoolean("success")) throw "undelete failed";
+log("account undeleted " + result[0]);
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_upsert_records">upsert records</a>
+                            <div id="demo_upsert_records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var account = new sforce.SObject("Account");
+account.Name = "TestingAjaxUpsert";
+account.Phone = "2837484894";
+// this will insert an account
+var result = sforce.connection.upsert("Id", [account]);
+account.Id = result[0].id;
+account.Name = "TestingAjaxUpsert2";
+// this will update the account
+result = sforce.connection.upsert("Id", [account]);
+if(result[0].getBoolean("success") <span>&amp;</span><span>&amp;</span> result[0].id == account.Id) {
+	log("upsert updated the account as expected");
+}
+else {
+	log("upsert failed!");
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_retrieve_records">retrieve records</a>
+                            <div id="demo_retrieve_records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; width:50%; position:relative; float:left; background-color: dimgrey;">
+                                    <h1 style="text-decoration: underline;">Sync</h1>
+                                    <pre>
+var account = new sforce.SObject("Account");
+account.Name = "retrieve update test";
+account.Phone = "2837484894";
+var result = sforce.connection.create([account]);
+if (result[0].getBoolean("success") == false) throw "create failed";
+log("account created " + result[0]);
+result = sforce.connection.retrieve("Name,Phone", "Account", [result[0].id]);
+if (result[0] == null) throw "retrive failed";
+log("account retrieved: " + result[0]);
+result[0].Phone = "111111111111";
+result = sforce.connection.update(result);
+if (result[0].getBoolean("success") == false) throw "update failed";
+log("account updated: " + result[0]); 
+<br/>
+<br/>
+</pre>
+                                </div>
+                                <div style="text-align:left; width:50%; position:relative; float:left; background-color: dimgrey;">
+                                    <h1 style="text-decoration: underline;">Async</h1>
+                                    
+                                    <pre>
+var account = new sforce.SObject("Account");
+account.Name = "retrieve update test";
+account.Phone = "2837484894";
+var result = sforce.connection.create([account]);
+if (result[0].getBoolean("success") == false) throw "create failed";
+log("account created " + result[0]);
+var callback = {
+	onSuccess: function(result) {
+	if (result[0] == null) throw "retrive failed";
+		log("account retrieved: " + result[0]);
+	},
+	onFailure: function(error) {
+	log("failed due to " + error);
+	}
+};
+result = sforce.connection.retrieve("Name,Phone", "Account",
+[result[0].id], callback);
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_search_records">search records</a>
+                            <div id="demo_search_records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var result = sforce.connection.search(
+"find {manoj} in Name fields RETURNING Account(name, id)");
+if (result) {
+	var records = result.getArray("searchRecords");
+	for (var i=0; i <span>&lt;</span> records.length; i++) {
+		var record = records[i].record;
+		log(record.Id + " -- " + record.Name);
+	}
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_getDeleted_records">getDeleted records</a>
+                            <div id="demo_getDeleted_records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var start = new Date();
+var end = new Date();
+start.setDate(end.getDate() - 1);
+var result = sforce.connection.getDeleted("Account", start, end);
+var records = result.getArray("deletedRecords");
+log("following records are deleted:");
+for (var i=0; i <span>&lt;</span> records.length; i++) {
+	log(records[i].id);
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_getUpdated_records">getUpdated records</a>
+                            <div id="demo_getUpdated_records" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var start = new Date();
+var end = new Date();
+start.setDate(end.getDate() - 1);
+var result = sforce.connection.getUpdated("Account", start, end);
+var records = result.getArray("ids");
+log("following records are updated:");
+for (var i=0; i <span>&lt;</span> records.length; i++) {
+	log(records[i]);
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_convertLead">convertLead</a>
+                            <div id="demo_convertLead" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var account = new sforce.SObject("Account");
+account.Name = "convert lead sample";
+account.Phone = "2837484894";
+result = sforce.connection.create([account]);
+account.Id = result[0].id;
+var lead = new sforce.SObject("Lead");
+lead.Country = "US";
+lead.Description = "This is a description";
+lead.Email = "someone@somewhere.com";
+lead.FirstName = "first";
+lead.LastName = "last";
+lead.Company = account.Name;
+result = sforce.connection.create([lead]);
+lead.Id = result[0].id;
+var convert = new sforce.LeadConvert();
+convert.accountId = account.Id;
+convert.leadId = lead.Id;
+convert.convertedStatus = "Qualified";
+result = sforce.connection.convertLead([convert]);
+if (result[0].getBoolean("success")) {
+	log("lead converted " + result[0]);
+} else {
+	log("lead convert failed " + result[0]);
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_describeSObject">describeSObject</a>
+                            <div id="demo_describeSObject" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var result = sforce.connection.describeSObject("Account");
+log(result.label + " : " + result.name + " : ");
+log("---------- fields ---------");
+for (var i=0; i <span>&lt;</span> result.fields.length; i++) {
+	var field = result.fields[i];
+	log(field.name + " : " + field.label + " : " + field.length + " : ");
+}
+log("---------- child relationships ---------");
+for (var i=0; i <span>&lt;</span> result.childRelationships.length; i++) {  
+	var cr = result.childRelationships[i];
+	log(cr.field + " : " + cr.childSObject);
+}
+log("---------- record type info ----------");
+for (var i=0; i <span>&lt;</span> result.recordTypeInfos.length; i++) {
+    var rt = result.recordTypeInfos[i];
+	log(rt.name);
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_describeSObjects">describeSObjects</a>
+                            <div id="demo_describeSObjects" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var result = sforce.connection.describeSObjects(["Account", "Contact"]);
+for (var i=0; i <span>&lt;</span> result.length; i++) {
+	log(result[i].label + " : " + result[i].name + " : ");
+}
+                            </pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_describeGlobal">describeGlobal</a>
+                            <div id="demo_describeGlobal" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre> 
+var result = sforce.connection.describeGlobal();
+var sobjects = result.getArray("sobjects");
+for (var i=0; i <span>&lt;</span> sobjects.length; i++) {
+	log(sobjects[i].name);
+} 
+                </pre> 
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_describeLayout">describeLayout</a>
+                            <div id="demo_describeLayout" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre> 
+var result = sforce.connection.describeLayout("Account");
+var layouts = result.getArray("layouts");
+for (var i=0; i <span>&lt;</span> layouts.length; i++) {
+	var layout = layouts[0];
+	detailLayoutSections(layout.detailLayoutSections);
+}
+function detailLayoutSections(sections) {
+	for (var i=0; i <span>&lt;</span> sections.length; i++) {
+		var section = sections[i];
+		log(section.columns + ":" + section.heading + ":");
+		layoutRows(section.getArray("layoutRows"));
+	}
+}
+function layoutRows(rows) {
+	for (var i=0; i <span>&lt;</span> rows.length; i++) {
+		var row = rows[i];
+		layoutItems(row.getArray("layoutItems"));
+	}
+}
+function layoutItems(items) {
+	for (var i=0; i <span>&lt;</span> items.length; i++) {
+		var item = items[i]; 
+		log(" " + item.label);
+	}
+}   
+</pre>  
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_describeTabs">describeTabs</a>
+                            <div id="demo_describeTabs" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre> 
+var result = sforce.connection.describeTabs();
+for (var i=0; i <span>&lt;</span> result.length; i++) {
+	var tabSet = result[i];
+	log( tabSet.label);
+	displayTabs(tabSet.get("tabs"));
+}
+function displayTabs(tabs) {
+	for( var i=0; i <span>&lt;</span> tabs.length; i++) {
+		var tab = tabs[i];
+		log( " " + tab.label + " " + tab.url);
+	}
+}
+</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_getServerTimestamp">getServerTimestamp</a>
+                            <div id="demo_getServerTimestamp" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                <pre>var result = sforce.connection.getServerTimestamp();</pre>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_getUserInfo">getUserInfo</a>
+                            <div id="demo_getUserInfo" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre>
+var user = sforce.connection.getUserInfo();
+log("Hello " + user.userName);
+log("Your email id is " + user.userEmail);
+log("and you work for " + user.organizationName);  
+                        </pre>   
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_resetPassword">resetPassword and setPassword</a>
+                            <div id="demo_resetPassword" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre> 
+var username = "myname@myemail.com";
+var result = sforce.connection.query(
+"SELECT ID from User WHERE User.username='" + username + "'");
+var records = result.getArray("records");
+if (records.length != 1) throw "unable to find user";
+var id = records[0].Id;
+sforce.connection.resetPassword(id);
+sforce.connection.setPassword(id, "123456");   
+        </pre>     
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_sendEmail">sendEmail</a>
+                            <div id="demo_sendEmail" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre> 
+// single mail request
+var singleRequest = new sforce.SingleEmailMessage();
+singleRequest.replyTo = "jsmith@acme.com";
+singleRequest.subject = "sent through ajax test driver";
+singleRequest.plainTextBody = "this test went through ajax";
+singleRequest.toAddresses = ["noone@nowhere.com"];
+// mass mail request - need to get email template ID
+var queryResponse = sforce.connection.query("select id from emailtemplate");
+var templatedId = queryResponse.getArray("records")[0].Id;
+var massRequest = new sforce.MassEmail/Message();
+massRequest.targetObjectIds = [globalContact.id];
+massRequest.replyTo = "jsmith@acme.com";
+massRequest.subject = "sent through ajax test driver";
+massRequest.templateId = templateId;
+var sendMailRes = sforce.connection.sendEmail([singleRequest, massRequest]);
+</pre>     
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_QueryResultIterator">QueryResultIterator</a>
+                            <div id="demo_QueryResultIterator" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <pre> 
+var result = sforce.connection.query("Select Name,Id from User", {
+onSuccess : success, onFailure : failure});
+function success(result) {
+	var it = new sforce.QueryResultIterator(result);
+	while(it.hasNext()){
+		var record = it.next();
+		log(record.Name + " -- " + record.Id);
+	}
+}
+function failure(error) {
+	log("An error has occurred " + error);
+}  
+</pre>  
+                                </div>
+                            </div>
+                        </li>
+                        <li><a data-toggle="collapse" data-target="#demo_AJAX_Proxy">AJAX Proxy </a>
+                            <div id="demo_AJAX_Proxy" class="collapse" style="background-color: DimGrey; color:white;">
+                                <div style="text-align:left; margin: auto">
+                                    <h1 style="text-decoration: underline;"> GET Example:</h1>
+                                    
+                                    <pre> 
+sforce.connection.remoteFunction({
+	url : "http://www.myExternalServer.com",
+	onSuccess : function(response) {
+		alert("result" + response);
+	}
+});   
+                        </pre>       
+                                    
+                                    <h1 style="text-decoration: underline;"> POST Example:</h1>
+                                    
+                                    <pre> 
+var envelope = ""; //request envelope, empty for this example
+sforce.connection.remoteFunction({
+	url : "http://services.xmethods.net:80/soap",
+	requestHeaders: {"Content-Type":"text/xml",
+		"SOAPAction": "\"\""
+	},  
+	requestData: envelope,
+	method: "POST",
+	onSuccess : function(response) {
+		sforce.debug.log(response);
+	},
+	onFailure : function(response) {
+		alert("Failed" + response)
+	}
+});
+                                    </pre>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div> 
+                
+            </div>
+
+            <div id="ToolKITExamples" class="subtabcontent">
+<h1 style="text-align:center;">Создание паблик сайта с помощью тулкита</h1>
+
+<pre>1. Для создания паблик сайта необходимо его задать в Salesforce, причем должна быть отметка напротив Require Secure Connections (HTTPS)</pre>
+<pre>2. Создать интегрирующего юзера, с соответсвующими правами доступа</pre>
+<pre>3. Чтобы подключить на VFP AJAX ToolKIT надо в хедере написать
+<span style="background-color:yellow;"><span>&lt;</span>script src="../../soap/ajax/45.0/connection.js" type="text/javascript"<span>&gt;</span><span>&lt;</span>/script<span>&gt;</span></span>
+<span style="background-color:yellow;"><span>&lt;</span>script src="/soap/ajax/45.0/apex.js" type="text/javascript"<span>&gt;</span><span>&lt;</span>/script<span>&gt;</span></span></pre>
+<pre>4. На VFP указать URL сервиса <span style="background-color:yellow;">sforce.connection.serverUrl = '{!$Site.Prefix}/services/Soap/u/45.0';</span></pre> 
+<pre>5. На VFP пройти авторизацию под интегрирующим юзером:
+        try{ 
+            result = <span style="background-color:yellow;">sforce.connection.login("findjob@gmail.com", "passwordSecuritytoken");</span>
+        }catch(error) { 
+            if (error.faultcode.indexOf("INVALID_LOGIN") != -1) { 
+                console.log("check your username and passwd, invalid login"); 
+            } else { console.log(error); 
+                   } 
+        } </pre>
+<pre>6. Установить сессию для соединения, присвоив этой сессии айди сессии интегрирующего юзера:
+<span style="background-color:yellow;">sforce.connection.sessionId=result.sessionId;</span>		
+Следует учитывать, что обращение к API типа <span style="background-color:yellow;">"{<var>!$Api.Session_ID</var>}"</span> или <span style="background-color:yellow;">"{<var>!GETSESSIONID()</var>}"</span> или <span style="background-color:yellow;"><var>window.ApiUtils.getSessionId();</var></span>
+для получения сессии браузером не работают для паблик сайта, но работают для обычных приложений внутри Salesforce после авторизации</pre>
+	
+<pre>7. Управление количеством получения записей за один запрос (батч) осуществляется с помощью <span style="background-color:yellow;">sforce.connection.batchSize</span> = <span style="background-color:Aqua;">200...2000</span>;</pre>
+
+<h1 style="text-align:center;">Подключение тулкита к VFP</h1>   
+<pre>1. Чтобы подключить на VFP AJAX ToolKIT надо в хедере написать
+<span style="background-color:yellow;"><span>&lt;</span>script src="../../soap/ajax/45.0/connection.js" type="text/javascript"<span>&gt;</span><span>&lt;</span>/script<span>&gt;</span></span>
+<span style="background-color:yellow;"><span>&lt;</span>script src="/soap/ajax/45.0/apex.js" type="text/javascript"<span>&gt;</span><span>&lt;</span>/script<span>&gt;</span></span></pre>                    
+<pre>2. Установить сессию для соединения, присвоив этой сессии айди сессии интегрирующего юзера:
+<span style="background-color:yellow;">sforce.connection.sessionId="{<var>!$Api.Session_ID</var>}";</span>		
+  или <span style="background-color:yellow;">"{<var>!GETSESSIONID()</var>}"</span> или <span style="background-color:yellow;"><var>window.ApiUtils.getSessionId();</var></span>
+</pre> 
+<pre>3. Управление количеством получения записей за один запрос (батч) осуществляется с помощью <span style="background-color:yellow;">sforce.connection.batchSize</span> = <span style="background-color:Aqua;">200...2000</span>;</pre>
+<h1 style="text-align:center;">Пагинация с помощью тулкита</h1>                    
+<pre>
+1. Извлечь все доступные записи в JS Array и осуществить пагинацию по его элементам
+</pre>
+<pre>
+2. Сделать двухуровневую пагинацию:
+- "внешнюю" с помощью метода тулкита sforce.connection.queryMore используя заранее подготовленный список квери-локаторов
+- "внутреннюю" или вложенную пагинацию внутри JS Array каждого батча (запроса)
+
+Пока внутренний итератор находится в пределах предществующего и текущего квери-локаторов 
+пагинация осуществляется по элементам JS Array полученного после запроса.
+
+Как только внутренний итератор выходит за пределы предществующего и текущего квери-локаторов, осуществляется выбор квери-локатора 
+(в зависимости от того куда сдвинулся внутренний итератор) и реализуется метод sforce.connection.queryMore, 
+который извлекает новый список записей, уже внутри которого реализуется вложенная пагинация
+</pre>
+<pre>
+3. Создать на сервере в классе веб-сервис, который будет предоставлять каждый раз необходимые записи
+
+global class Class {
+	webservice static List<span>&lt;</span>sObject<span>&gt;</span> Method(param1, param2, ...){}
+}
+
+	и вызывать его с помощью  sforce.apex.execute("absi_dev/Class","Method",{param1, param2, ...});
+</pre>
+                <h1 style="text-align:center;">ИНСЕРТ ФАЙЛОВ С ФОТО</h1>
+<pre>
+	    function previewFile() {
+        let file = document.querySelector('input[type=file]').files[0];
+        if(file) {
+                var Name = file.name;
+                var index = Name.lastIndexOf(".");
+                fileName = Name.substring(0, index);
+                fileExtension = Name.substring(index);
+                reader  = new FileReader();
+                reader.onload = function(){
+                    //FileAsAString = btoa(reader.result); <span style="background-color:Aqua;">для случая использования апекс контроллера</span>
+                    FileAsAString = reader.result; <span style="background-color:Aqua;">для случая использования ajax toolkit</span>
+                };
+                reader.readAsBinaryString(file);
+        } else {
+            alert("select a file...");
+        }
+    }
+	
+                var contVersion = new sforce.SObject("ContentVersion");
+                contVersion.ContentLocation = 'S';
+                contVersion.PathOnClient = fileName + fileExtension;
+                contVersion.VersionData = new sforce.Base64Binary(FileAsAString).toString(); <span style="background-color:Aqua;">как-то так преобразовать файл в VersionData</span>
+                contVersion.Title = fileName;
+                contVersion.FirstPublishLocationId = result[0].Id; <span style="background-color:Aqua;">Id записи</span>
+                contVersion.IsMajorVersion = false;
+                var createResult = sforce.connection.create([contVersion]);
+                var retrieve_result = sforce.connection.retrieve("Id", "ContentVersion", [createResult[0].id]);
+
+	<span style="background-color:yellow; text-decoration: underline;">В случае использования web-service на стороне контроллера на сервере код выглядит так: </span>
+
+                sforce.apex.execute("absi_dev/FindJobPageScriptOnly","insertNewPhoto",
+                                            {cand_Mail:ContactEmail,
+                                             newfile:FileAsAString,
+                                             newfileName:fileName,
+                                             newfileextension:fileExtension});
+
+		<span style="background-color:Aqua; text-decoration: underline;">APEX WEB-Service</span>
+
+        <span style="background-color: darkgrey; color:white;">webservice static void insertNewPhoto(string cand_Mail, string newfile, string newfileName, string newfileextension)</span>{
+        Blob thefileblob = EncodingUtil.base64Decode(newfile);
+					/* SOME CODE */
+    }
+</pre>
+            </div>    
+            
+            <div id="Sync_and_Async_Calls_AJAX_Toolkit" class="subsubtabcontent">
+                <h3>Synchronous Calls</h3>
+                <pre>Syntax: sforce.connection.method("arg1","arg2", ...); 
+                Example: sforce.connection.login("MyName@MyOrg.com","myPassword1");</pre>
+                <h3>Asynchronous Calls </h3>
+                <pre>Syntax: method("arg1","arg2", ..., callback_method); 
+                Example: 
+                var callback = {onSuccess: handleSuccess, onFailure: handleFailure}; 
+                function handleSuccess(result) {} 
+                function handleFailure(error) {} 
+                sforce.connection.query("Select name from Account", callback);
+
+				В этом примере onSuccess - функция обратного вызова, которая вернет результаты, когда они будут
+                <!--In this example, onSuccess is the callback function, which will return the results when they are ready.--></pre>   
+            </div>
+            
+            <div id="Object_Functions" class="subsubtabcontent">
+                <h3>Значение свойств могут быть получены прямо или с помощью методов set или get
+                    <!--Property values can be accessed directly or by using a generic set or get method. -->
+                </h3>
+
+                <pre>  
+	Например, вы можете получить значение полю Name в Account используя один из этих способов:
+		• account.get("Name") 
+		• account.Name
+		• account["Name"]
+	Вы можете присвоить значение полю Name в Account используя один из этих способов:
+		• account.set("Name", "MyAccount");
+		• account.Name = "MyAccount";
+		• account["Name"]="MyAccount";
+				</pre>
+            </div>    
+            
+            <div id="Data_Types_in_AJAX_Toolkit" class="subsubtabcontent">
+                <pre>
+
+	AJAX Toolkit возвращает все данные в виде строк. 
+
+	Если необходимо, вы можете конвертировать данные в соответствующий тип данных, используя одну из функций, 
+	предоставляемых с возвращаемым объектов: 
+	getDate, getDateTime, getInt, getFloat, getBoolean, getArray, getBase64Binary
+
+</pre>
+            </div> 
+            
+            <div id="source_Context_Variable" class="subsubtabcontent">
+                <pre>
+Перейдите в любой контекст и верните его обратно в метод обратного вызова, используя переменную источника контекста. 
+Например, асинхронный вызов из функции getNextVacansyList, где var &quot;state&quot; источник аргумент для функции layoutResultsForNext 
+                 
+                    function <span style="background-color:yellow; font-weight: bold;">getNextVacansyList</span>(newLocator){
+                        var <span style="background-color:yellow; font-weight: bold;">state</span>  = {
+                            previousIndex : newLocator.substring(19,newLocator.length)
+                        };
+                        var callback = {
+                            onSuccess: layoutResultsForNext,
+                            onFailure: queryFailed,
+                            <span style="background-color:yellow; font-weight: bold;">source: state</span>
+                        };
+                        sforce.connection.queryMore(newLocator, callback);
+                    }    
+                    
+                    function <span style="background-color:yellow; font-weight: bold;">layoutResultsForNext</span>(queryResult, <span style="background-color:yellow; font-weight: bold;">source</span>) {
+                        if (queryResult.size > 0) {
+                            var records = queryResult.getArray('records');
+                            vacancies = [];
+                           for (var i = 0; i &#60; records.length; i++) {
+                                let parameters = new Map([
+                                    ['Vacancy Name',  records[i].get('Name')], 
+                                    ['Salary Range',  records[i].get('absi_dev__Salary__c')], 
+                                    ['Vacancy Status', records[i].get('absi_dev__Status__c')], 
+                                    ['Vacancy ID',  records[i].get('Id')]
+                                ]);
+                                vacancies.push(parameters);
+                            }
+                            if(queryResult.queryLocator !== null){
+                                currentIndex = queryResult.queryLocator;
+                                currentIndex = currentIndex.substring(19,currentIndex.length);
+                            }else{
+                                currentIndex = totalSize;
+                            }
+                            <span style="background-color:yellow; font-weight: bold;">previousIndex = source.previousIndex;</span>
+                            vacanciesListLoading(page, size);
+                        }
+                    }</pre>                  
+            </div>   
+
+            <div id="ToolKitDemo" class="tabcontent">
+            </div>
+            <div id="AJAXImage" style="width:100%; height:100vh; 
+                        background-image: url('{!LEFT($CurrentPage.URL,FIND('/',$CurrentPage.URL,9))}/sfc/servlet.shepherd/document/download/0690X00000958J2');
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        background-size: 70% auto;">
+                
+            </div>
+            
+            <script>
+            function handleClick() {
+                const number = document.getElementById('number').value;    
+                if (number) {
+                    handleAjaxRequest();
+                }
+            }
+            
+            var jokesNum = 0;
+            
+            function handleAjaxRequest() {
+                const xhr = new XMLHttpRequest();
+                const number = document.getElementById('number').value;
+                const url = 'http://api.icndb.com/jokes/random/' + number;
+                
+                xhr.open('GET', url, true);
+                xhr.onload = function() {
+                    if(this.status === 200) {
+                        const response = JSON.parse(this.responseText);
+                        let output = document.createElement('ul');
+                        document.getElementById("AJAXExternalAPI").appendChild(output);
+                        if(response.type === 'success') {
+                            //var j = jokesNum;
+                            response.value.forEach(function(joke){
+                                jokesNum = jokesNum + 1;
+                                var li = document.createElement('li');
+                                li.innerHTML = jokesNum + '. ' + joke.joke;
+                                output.appendChild(li);
+                            });
+                        }
+                    }
+                    //jokesNum = jokesNum + number; 
+                };
+                xhr.send();    
+            }            
+            </script>
+            <script>
+            
+            var buttonNames = ['Callback_Functions', 'Remote_Objects_Query', 'RemObjsIntro', 'Using_Remote_Objects', 'Best_Practices', 'Remote_Objects_Limits', 'JS_Remoting', 'When_to_Use', 'Error_Handling', 'Working_with_Toolkit', 'ToolKIT_Issues', 'What_AJAX_is', 'AJAX_Using_REST_API', 'AJAX_external_API', 'actionFunction', 'actionRegion', 'actionSupport', 'actionPoller', 'Calls', 'Object_Functions', 'Data_Types', 'Context_Variable'];
+            
+            function openSlides(evt, topicName, buttonName) {
+                var i, tabcontent, subtabcontent, subsubtabcontent, tablinks, tab;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                subtabcontent = document.getElementsByClassName("subtabcontent");
+                subsubtabcontent = document.getElementsByClassName("subsubtabcontent");
+                tab = document.getElementsByClassName("tab");
+                
+                if(buttonNames.includes(buttonName)){
+                	document.getElementById('AJAXImage').style.display = 'none';
+                }
+                
+                for (i = 0; i < tab.length; i++) {
+                    tab[i].style.display = "none";
+                }
+                
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                
+                for (i = 0; i < subtabcontent.length; i++) {
+                    subtabcontent[i].style.display = "none";
+                }    
+                
+                for (i = 0; i < subsubtabcontent.length; i++) {
+                    subsubtabcontent[i].style.display = "none";
+                }    
+                
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(topicName).style.display = "block";
+                evt.currentTarget.className += " active";
+                console.log('openSlides comes to getSlides function');
+                getSlides();
+            }
+            
+            function closeSlides(evt, topicName) {
+                var i, tabcontent, subtabcontent, subsubtabcontent, tablinks, tab;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                subtabcontent = document.getElementsByClassName("subtabcontent");
+                subsubtabcontent = document.getElementsByClassName("subsubtabcontent");
+                tab = document.getElementsByClassName("tab");
+                for (i = 0; i < tab.length; i++) {  //getElementById("id").style.display = null;
+                    tab[i].style.display = null;
+                }
+                
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = null;
+                }
+                
+                for (i = 0; i < subtabcontent.length; i++) {
+                    subtabcontent[i].style.display = null;
+                }    
+                
+                for (i = 0; i < subsubtabcontent.length; i++) {
+                    subsubtabcontent[i].style.display = null;
+                }    
+                
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(topicName).style.display = "none";
+                evt.currentTarget.className += " active";
+            }
+            
+            function openTopic(evt, topicName, buttonName) {
+                var i, tabcontent, subtabcontent, subsubtabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                subtabcontent = document.getElementsByClassName("subtabcontent");
+                subsubtabcontent = document.getElementsByClassName("subsubtabcontent");
+                
+                if(buttonNames.includes(buttonName)){
+                	document.getElementById('AJAXImage').style.display = 'none';
+                }else{
+                	document.getElementById('AJAXImage').style.display = 'block';
+                }
+                
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                
+                for (i = 0; i < subtabcontent.length; i++) {
+                    subtabcontent[i].style.display = "none";
+                }    
+                
+                for (i = 0; i < subsubtabcontent.length; i++) {
+                    subsubtabcontent[i].style.display = "none";
+                }    
+                
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(topicName).style.display = "block";
+                evt.currentTarget.className += " active";
+                
+            }
+            
+            function openSubTopic(evt, topicName, buttonName) {
+                var i, tabcontent, tablinks, subsubtabcontent;
+                subsubtabcontent = document.getElementsByClassName("subsubtabcontent");
+                console.log(buttonName);
+                console.log(buttonNames);
+                if(buttonNames.includes(buttonName)){
+                	document.getElementById('AJAXImage').style.display = 'none';
+                }else{
+                	document.getElementById('AJAXImage').style.display = 'block';
+                }
+                
+                for (i = 0; i < subsubtabcontent.length; i++) {
+                    subsubtabcontent[i].style.display = "none";
+                }
+                
+                tabcontent = document.getElementsByClassName("subtabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(topicName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+            
+            function openSubSubTopic(evt, topicName, buttonName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("subsubtabcontent");
+				
+                console.log(buttonName);
+                console.log(buttonNames);
+                
+                if(buttonNames.includes(buttonName)){
+                	document.getElementById('AJAXImage').style.display = 'none';
+                }else{
+                	document.getElementById('AJAXImage').style.display = 'block';
+                }
+                
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(topicName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }  
+            
+            </script>
+            
+            <script>
+            /* For Slides */
+            function setAttributes(el, attrs) {
+                for(var key in attrs) {
+                    el.setAttribute(key, attrs[key]);
+                }
+            }     
+            function createSlideHolder(counter, CDId, alt, fileIdsRecordsLength){
+                var slideHolder = document.createElement('div');
+                slideHolder.className = 'mySlides fade';
+                slideHolder.style.textAlign = 'center';
+                slidesDiv.appendChild(slideHolder);
+                var numberHolder = document.createElement('div');
+                numberHolder.className = 'numbertext';
+                numberHolder.innerHTML = (counter+1).toString() + " / " + fileIdsRecordsLength; //fileIds.records.length.toString();
+                slideHolder.appendChild(numberHolder);
+                var slide;
+                var url = "{!LEFT($CurrentPage.URL,FIND('/',$CurrentPage.URL,9))}" + "/sfc/servlet.shepherd/document/download/" + CDId;//fileIds.records[i].ContentDocumentId;
+                slide = document.createElement('img');  
+                slide.className = 'slideImg';
+                setAttributes(slide, {"src":url, "alt":alt, "allowfullscreen": "true", "webkitallowfullscreen": "true", "mozallowfullscreen": "true"});//, "onclick":"displayModal(this);"
+                slideHolder.appendChild(slide);        
+            }    
+            
+            function plusSlides(n) {
+                showSlides(slideIndex += n);
+            }
+            
+            function currentSlide(n) {
+                showSlides(slideIndex = n);
+            }
+            
+            function showSlides(n) {
+                var i;
+                var slides = document.getElementsByClassName("mySlides");
+                if (n > slides.length) {slideIndex = 1}    
+                if (n < 1) {slideIndex = slides.length}
+                for (i = 0; i < slides.length; i++) {
+                    slides[i].style.display = "none";  
+                }
+                slides[slideIndex-1].style.display = "block";  
+            }
+            
+            function upsertCDistribution(contentdocumentid){
+                var contVersion = sforce.connection.query("select id from contentversion where contentdocumentid = " + '\'' + contentdocumentid + '\'');
+                var cd = new sforce.SObject("ContentDistribution");
+                cd.Name = 'Test';
+                cd.ContentVersionId = contVersion.records.Id;
+                cd.PreferencesAllowViewInBrowser= true;
+                var createResult = sforce.connection.upsert("Id", [cd]);
+                return sforce.connection.retrieve("Id, DistributionPublicUrl", "ContentDistribution", [createResult[0].id]);
+            }
+            
+            function getSlides(){
+                
+                console.log('getSlides');
+                sforce.connection.sessionId = '{!$Api.Session_ID}';
+                console.log(sforce.connection.sessionId);
+                var slider = document.getElementById('slider');
+                slidesDiv = document.createElement('div');
+                slidesDiv.id = "slidesDiv";
+                slider.appendChild(slidesDiv);
+                //var fileIds = sforce.connection.query("SELECT ContentDocumentId, ContentDocument.FileExtension, ContentDocument.Title FROM ContentDocumentLink WHERE ContentDocument.Title LIKE 'Слайд%' and ContentDocument.FileExtension in ('jpg', 'png')");
+                var fileIds = sforce.connection.query("SELECT Id, FileExtension, Title FROM ContentDocument WHERE Title LIKE 'Слайд%' and FileExtension in ('jpg', 'png') ORDER BY Title");//
+                console.log(fileIds);
+                if(fileIds.records){
+                    if(Array.isArray(fileIds.records)){
+                        for(var i = 0; i < fileIds.records.length; i++){
+                            var retrieve_result = upsertCDistribution(fileIds.records[i].Id);
+                            createSlideHolder(i, fileIds.records[i].Id, fileIds.records[i].Title, fileIds.records.length); 
+                        }
+                    } 
+                    else {
+                        var retrieve_result = upsertCDistribution(fileIds.records.ContentDocumentId);
+                        createSlideHolder(1, fileIds.records.ContentDocumentId, fileIds.records.ContentDocument.Title, 1);
+                    }
+                    var prevSlide = document.createElement('a');
+                    setAttributes(prevSlide, {"class":"prev", "onclick": "plusSlides(-1)"});
+                    prevSlide.innerHTML = "&#10094;";
+                    slidesDiv.appendChild(prevSlide);
+                    var nextSlide = document.createElement('a');
+                    setAttributes(nextSlide, {"class":"next", "onclick": "plusSlides(1)"});
+                    nextSlide.innerHTML = "&#10095;";
+                    slidesDiv.appendChild(nextSlide);
+                    slideIndex = 1;
+                    showSlides(slideIndex);                    
+                } else{//if fileIds.records is null or undefined
+                    var imageSlide = document.createElement('img');
+                    setAttributes(imageSlide, {"src":url});
+                    imageSlide.style.height = 'inherit';
+                    slidesDiv.appendChild(imageSlide);
+                }
+                console.log('getSlides is finished');
+            }
+            
+            document.onkeydown = function(evt) {
+                evt = evt || window.event;
+                if (evt.keyCode == 27) {
+                    //alert('Esc key pressed.');
+                    closeSlides(event, 'AJAXTechnology');
+                    document.getElementById('AJAXImage').style.display = 'block';
+                }
+                if (evt.keyCode == 39) {
+                    //alert('Esc key pressed.');
+                    plusSlides(1);
+                }  
+                if (evt.keyCode == 37) {
+                    //alert('Esc key pressed.');
+                    plusSlides(-1);
+                }  
+            };
+            
+            </script>
+            
+            <script> 
+            /* FOR Save Account Page */
+            function getType(){
+                var sel=document.getElementById('selectedType').selectedIndex;
+                var options=document.getElementById('selectedType').options;
+                var obj = options[sel].text;
+                submitActionFunction(obj);
+                Arr1 = [];
+                Arr2 = [];
+            }
+            
+            function search(){
+                var sel=document.getElementById('selectedType').selectedIndex;
+                var options=document.getElementById('selectedType').options;
+                //console.log('Выбрана опция '+options[sel].text+' '+options[sel].value); 
+                var obj = options[sel].text;        
+                searchActionFunction(obj);
+            }  
+            
+            function getObject(element){
+                var objID = element.htmlFor.slice(element.htmlFor.lastIndexOf(':') + 1);
+                getObjectActionFunction(objID);
+            }
+            
+            function getSelectedInLists(){
+                for(var i = 1; i < document.getElementsByTagName('select').length; i++){
+                    document.getElementsByTagName('select')[i].value = document.getElementsByTagName('select')[i].parentElement.firstChild.getAttribute("value");
+                }
+                var x = document.getElementById("j_id0:j_id6:Pageblock:blockTable").rows.length;
+                var key;
+                var value;
+                var nodeName;
+                var myMap = new Map();
+                //var Arr1 = new Array();
+                //var Arr2 = new Array();
+                var myMap1 = new Map();
+                myMap1.set('1', '1');
+                myMap1.set('2', '2');
+                myMap1.set('3', '3');
+                
+                for(var i = 0; i < (x-1); i++){
+                    console.log(document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + i + ":col3"));
+                    var nodeName = document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + i + ":col3").firstChild.nodeName;
+                    key = document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + i + ":col1").firstChild;
+                    //Arr1.push(key);
+                    if(nodeName=="INPUT"){
+                        if(document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + i + ":col3").firstChild.getAttribute("type") == 'text'){
+                            value = document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + i + ":col3").firstChild.value.toString();
+                            //myMap.set(key, value);
+                        }else if(document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + i + ":col3").firstChild.getAttribute("type") == 'checkbox'){
+                            value = document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + i + ":col3").firstChild.getAttribute("checked");
+                            //myMap.set(key, value);
+                        }
+                        //map.set(document.getElementById("j_id0:j_id2:Pageblock:blockTable:" + i + ":col1").firstChild.toString(), document.getElementById("j_id0:j_id2:Pageblock:blockTable:" + i + ":col3").firstChild.toString());
+                    }else if(nodeName=="TEXTAREA"){
+                        value = document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + i + ":col3").firstChild.innerHTML.toString();
+                        //myMap.set(key, value);
+                    }else if(nodeName=="SPAN"){
+                        value = document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + i + ":col3").firstChild.firstChild.getAttribute("value").toString();
+                        //myMap.set(key, value);
+                    }
+                    myMap.set(key, value);
+                    //Arr2.push(value);
+                }
+                
+            }
+            
+            // var Arr1 = [];//new Array();
+            //var Arr2 = [];//new Array();  
+            
+            function inputTextChange(element){
+                //Arr1 = [];
+                //Arr2 = [];
+                console.log(document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + u + ":col3"));
+                var u1 = element.parentNode.getAttribute("id").substring(element.parentNode.getAttribute("id").indexOf("blockTable") + 11);//element.getAttribute("name").substring(element.getAttribute("name").indexOf("blockTable") + 11);
+                var u = u1.slice(0, u1.indexOf(":")); 
+                var nodeName = document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + u + ":col3").firstChild.nodeName;
+                var num = Arr1.indexOf(document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + u + ":col1").innerHTML);
+                if(num < 0){
+                    Arr1.push(document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + u + ":col1").innerHTML);
+                    if(nodeName=="INPUT"){
+                        if(document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + u + ":col3").firstChild.getAttribute("type") == 'text'){
+                            Arr2.push(element.value.toString());
+                        }else if(document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + u + ":col3").firstChild.getAttribute("type") == 'checkbox'){
+                            Arr2.push(document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + u + ":col3").firstChild.checked);
+                        }
+                    }else if(nodeName=="TEXTAREA"){
+                        Arr2.push(element.value.toString());
+                    }else if(nodeName=="SPAN"){
+                        Arr2.push(element.value.toString());
+                    }
+                    //Arr2.push(element.value.toString());
+                    num = Arr1.length - 1;
+                }else if(num >= 0){
+                    if(nodeName=="INPUT"){
+                        if(document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + u + ":col3").firstChild.getAttribute("type") == 'text'){
+                            Arr2[num] = element.value.toString();
+                        }else if(document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + u + ":col3").firstChild.getAttribute("type") == 'checkbox'){
+                            Arr2[num] = document.getElementById("j_id0:j_id6:Pageblock:blockTable:" + u + ":col3").firstChild.checked; 
+                        }
+                    }else if(nodeName=="TEXTAREA"){
+                        Arr2[num] = element.value.toString();
+                    }else if(nodeName=="SPAN"){
+                        Arr2[num] = element.value.toString();
+                    }            
+                    //Arr2[num] = element.value.toString();
+                }
+                
+            }
+            
+            function showMap(){
+                var selectionMap = new Map();
+                
+                for(var i = 0; i < Arr1.length; i++){
+                    console.log(Arr1[i] + ' = ' + Arr2[i]);
+                    selectionMap.set(Arr1[i], Arr2[i]);
+                }
+                for (var [key, value] of selectionMap) {
+                    console.log(key + ' = ' + value);
+                }
+                console.log(selectionMap);
+                getObjectToSaveFunction(Arr1.toString(), Arr2.toString());
+            }
+            
+            </script>
+            
+            <script>
+            function includeNameToActionReg(){
+                if (document.getElementById('IncNameToActReg').checked == true) 
+                {
+                    document.getElementById('WithNameInActReg').style.display = 'block';
+                    document.getElementById('NoNameInActReg').style.display = 'none';
+                } 
+                if (document.getElementById('IncNameToActReg').checked == false) 
+                {
+                    document.getElementById('WithNameInActReg').style.display = 'none';
+                    document.getElementById('NoNameInActReg').style.display = 'block';
+                } 
+            }
+            </script>
+            
+  <script>
+    jQuery(document).ready(function($) {
+     // Pull 10 Accounts via the REST API
+      $.ajax('/services/data/v28.0/query?q=SELECT+Name+FROM+Account+LIMIT+10',
+        {
+          beforeSend: function(xhr) {
+            // Set the OAuth header from the session ID
+            xhr.setRequestHeader('Authorization', 'Bearer {!$Api.Session_ID}');
+          },
+          success: function(response) {
+            // We got 'em - append our records to the HTML list
+            $.each(response.records, function(index, record) {
+              $('#accountList').append('<li>'+record.Name+'</li>');
+            });
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            // Oops - what went wrong?
+            alert(jqXHR.status + ': ' + errorThrown);
+          }
+        }
+      );
+    });
+  </script>
+            
+    <script type="text/javascript">
+    function getRemoteAccount() {
+        var accountName = document.getElementById('acctSearch').value;
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.saveExtention.getAccount}',
+            accountName,
+            function(result, event){
+                if (event.status) {
+                    // Get DOM IDs for HTML and Visualforce elements like this
+                    document.getElementById('remoteAcctId').innerHTML = result.Id
+                    document.getElementById(
+                        "{!$Component.block.blockSection.secondItem.Industry}"
+                        ).innerHTML = result.Industry;
+                } else if (event.type === 'exception') {
+                    document.getElementById("responseErrors").innerHTML =
+                        event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                } else {
+                    document.getElementById("responseErrors").innerHTML = event.message;
+                }
+            },
+            {escape: true}
+        );
+    }
+    </script>            
+            
+        </body>
+    </html> 
+    
+</apex:page>
